@@ -4,6 +4,15 @@ import java.util.Arrays;
 
 class BubbleSort{
 
+    private static int[] arr = {3,2,1,5,4};
+
+    public static void main(String[] args) throws Exception {
+        int []a = BubbleSort(arr);
+        for (int i = 0; i < a.length; i++) {
+            System.out.println(a[i]);
+        }
+    }
+
     public static int[] BubbleSort(int[] sourceArray) throws Exception {
 
         // 对 arr 进行拷贝，不改变参数内容
