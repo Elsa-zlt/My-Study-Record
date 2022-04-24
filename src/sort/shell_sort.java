@@ -12,6 +12,7 @@ public class shell_sort {
     }
 
     public static void shell_sort(int[] arr) {
+
         int gap = 1, i, j, len = arr.length;
         int temp;
         while (gap < len / 3)
