@@ -443,7 +443,7 @@ class DFS {
             System.out.println(Arrays.toString(array));
         }
         for (int i = k; i < array.length; i++) {
-            if (isSwap(array, k, i)) {//这一步为了去重的，不懂点代码后面的链接
+            if (isSwap(array, k, i)) {//这一步为了去重的
                 swap(array, k, i);
                 quanPai(array, k + 1);
                 swap(array, k, i);
