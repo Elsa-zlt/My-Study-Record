@@ -1,6 +1,6 @@
 package sort;
 
-class quick_sort {
+class QuickSort {
 
     private static int[] arr = {3,2,1,5,4};
 
