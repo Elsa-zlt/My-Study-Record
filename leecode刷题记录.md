@@ -63,7 +63,7 @@ class Solution {
 }
 
 // 方法二：双指针
-// 时间复杂度：O(n)，其中 nn 是数组的长度。两个指针移动的总次数最多为 n 次。
+// 时间复杂度：O(n)，其中 n 是数组的长度。两个指针移动的总次数最多为 n 次。
 class Solution {
     public int[] twoSum(int[] numbers, int target) {
         int low = 0, high = numbers.length - 1;
@@ -226,6 +226,230 @@ class Solution {
       backtrack(ans, cur, open, close + 1, max);
       cur.deleteCharAt(cur.length() - 1);
     }
+  }
+}
+```
+
+#### [26. 删除有序数组中的重复项](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/)
+
+给你一个 升序排列 的数组 nums ，请你 原地 删除重复出现的元素，使每个元素 只出现一次 ，返回删除后数组的新长度。元素的 相对顺序 应该保持 一致 。
+
+由于在某些语言中不能改变数组的长度，所以必须将结果放在数组nums的第一部分。更规范地说，如果在删除重复项之后有 k 个元素，那么 nums 的前 k 个元素应该保存最终结果。
+
+将最终结果插入 nums 的前 k 个位置后返回 k 。
+
+不要使用额外的空间，你必须在 原地 修改输入数组 并在使用 O(1) 额外空间的条件下完成。
+
+示例 1：
+
+```
+输入：nums = [1,1,2]
+输出：2, nums = [1,2,_]
+解释：函数应该返回新的长度 2 ，并且原数组 nums 的前两个元素被修改为 1, 2 。不需要考虑数组中超出新长度后面的元素。
+```
+
+示例 2：
+
+```
+输入：nums = [0,0,1,1,1,2,2,3,3,4]
+输出：5, nums = [0,1,2,3,4]
+解释：函数应该返回新的长度 5 ， 并且原数组 nums 的前五个元素被修改为 0, 1, 2, 3, 4 。不需要考虑数组中超出新长度后面的元素。
+```
+
+
+提示：
+
+```
+0 <= nums.length <= 3 * 104
+-104 <= nums[i] <= 104
+nums 已按 升序 排列
+```
+
+```java
+// 双指针
+class Solution {
+  public int removeDuplicates(int[] nums) {
+    int nlen = nums.length;
+    // 特判
+    if(nums == null || nlen == 0) {
+      return 0;
+    }
+    int p = 0;
+    int q = 1;
+    while(q < nlen) {
+      if(nums[p] != nums[q]) {
+        nums[p + 1] =nums[q];
+        p++;
+      }
+      q++;
+    }
+    return p + 1;
+  }
+}
+```
+
+#### [剑指 Offer II 003. 前 n 个数字二进制中 1 的个数](https://leetcode-cn.com/problems/w3tCBm/)
+
+给定一个非负整数 n ，请计算 0 到 n 之间的每个数字的二进制表示中 1 的个数，并输出一个数组。
+
+ 
+
+示例 1:
+
+```
+输入: n = 2
+输出: [0,1,1]
+```
+
+解释: 
+
+```
+0 --> 0
+1 --> 1
+2 --> 10
+```
+
+示例 2:
+
+```
+输入: n = 5
+输出: [0,1,1,2,1,2]
+```
+
+解释:
+
+```
+0 --> 0
+1 --> 1
+2 --> 10
+3 --> 11
+4 --> 100
+5 --> 101
+```
+
+
+说明 :
+
+```
+0 <= n <= 105
+```
+
+
+进阶:
+
+给出时间复杂度为 O(n*sizeof(integer)) 的解答非常容易。但你可以在线性时间 O(n) 内用一趟扫描做到吗？
+要求算法的空间复杂度为 O(n) 。
+你能进一步完善解法吗？要求在C++或任何其他语言中不使用任何内置函数（如 C++ 中的 __builtin_popcount ）来执行此操作。
+
+```java
+// 自己的答案
+class Solution {
+  private int[] res;
+  public int[] countBits(int n) {
+    // 初始化
+    res = new int[n + 1];    
+    res[0] = 0;
+    int now;
+    for(int i = 0; i <= n; i++) {
+      int record = i;
+      int count = 0;
+      while(record != 0) {
+        now = record % 2;
+        if(now == 1) {
+          // 这个数字加1
+          count++;
+        }
+        record = (int)(record / 2);
+      }
+      res[i] = count;
+    }
+    return res;
+  }
+}
+
+// 方法一：Brian Kernighan 算法
+class Solution {
+    public int[] countBits(int n) {
+        int[] bits = new int[n + 1];
+        for(int i = 0; i <= n; i++) {
+            bits[i] = countOnes(i);
+        }
+        return bits;
+    }
+    public int countOnes(int x) {
+        int ones = 0;
+        while(x > 0) {
+            x &= (x - 1);
+            ones++;
+        }
+        return ones;
+    }
+}
+
+// 方法三：动态规划——最低有效位
+class Solution {
+    public int[] countBits(int n) {
+        int[] bits = new int[n + 1];
+        for(int i = 0; i <= n; i++) {
+            bits[i] = bits[i >> 1] + (i & 1);
+        }
+        return bits;
+    }
+}
+```
+
+#### [剑指 Offer II 011. 0 和 1 个数相同的子数组](https://leetcode-cn.com/problems/A1NYOS/)
+
+给定一个二进制数组 nums , 找到含有相同数量的 0 和 1 的最长连续子数组，并返回该子数组的长度。
+
+示例 1：
+
+```
+输入: nums = [0,1]
+输出: 2
+说明: [0, 1] 是具有相同数量 0 和 1 的最长连续子数组。
+```
+
+示例 2：
+
+```
+输入: nums = [0,1,0]
+输出: 2
+说明: [0, 1] (或 [1, 0]) 是具有相同数量 0 和 1 的最长连续子数组。
+```
+
+
+提示：
+
+```
+1 <= nums.length <= 105
+nums[i] 不是 0 就是 1
+```
+
+```java
+// 方法一：前缀和 + 哈希表
+class Solution {
+  public int findMaxLength(int[] nums) {
+    int maxLength = 0;
+    Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+    int counter = 0;
+    map.put(counter, - 1);
+    int len = nums.length;
+    for(int i = 0; i < len; i++) {
+      int num = nums[i];
+      if(num == 1) {
+        counter++;
+      } else {
+        counter--;
+      }
+      if(map.containsKey(counter)) {
+        int prevIndex = map.get(counter);
+        maxLength = Math.max(maxLength, i - prevIndex);
+      } else {
+        map.put(counter, i);
+      }
+    }
+    return maxLength;
   }
 }
 ```
