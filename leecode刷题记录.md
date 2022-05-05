@@ -651,8 +651,6 @@ public class Solution extends VersionControl {
 
 请必须使用时间复杂度为 O(log n) 的算法。
 
- 
-
 示例 1:
 
 ```
@@ -847,5 +845,290 @@ class MinStack {
  * int param_3 = obj.top();
  * int param_4 = obj.min();
  */
+```
+
+#### [977. 有序数组的平方](https://leetcode-cn.com/problems/squares-of-a-sorted-array/)
+
+给你一个按 非递减顺序 排序的整数数组 nums，返回 每个数字的平方 组成的新数组，要求也按 非递减顺序 排序。 
+
+示例 1：
+
+```
+输入：nums = [-4,-1,0,3,10]
+输出：[0,1,9,16,100]
+解释：平方后，数组变为 [16,1,0,9,100]
+排序后，数组变为 [0,1,9,16,100]
+```
+
+示例 2：
+
+```
+输入：nums = [-7,-3,2,3,11]
+输出：[4,9,9,49,121]
+```
+
+
+提示：
+
+```
+1 <= nums.length <= 104
+-104 <= nums[i] <= 104
+nums 已按 非递减顺序 排序
+```
+
+
+进阶：
+
+```
+请你设计时间复杂度为 O(n) 的算法解决本问题
+```
+
+```java
+// 自己的答案
+class Solution {
+    public int[] sortedSquares(int[] nums) {
+        int len = nums.length;
+        int[] tmp = new int[len];
+        if(nums[0] >= 0) {
+            for(int i = 0; i < len; i++) {
+                tmp[i] = nums[i] * nums[i];
+            }
+            return tmp;
+        }
+        for(int i = 0; i < len; i++) {
+            tmp[i] = nums[i] * nums[i];
+        }
+        Arrays.sort(tmp);
+        return tmp;
+    }
+}
+
+// 方法二：双指针
+class Solution {
+    public int[] sortedSquares(int[] nums) {
+        int n = nums.length;
+        int negative = -1;
+        for(int i = 0; i < n; i++) {
+            if(nums[i] < 0) {
+                negative = i;
+            } else {
+                break;
+            }
+        }
+        int[] ans = new int[n];
+        int index = 0, i = negative, j = negative + 1;
+        while(i >= 0 || j < n) {
+            if(i < 0) {
+                ans[index] = nums[j] * nums[j];
+                j++;
+            } else if(j == n) {
+                ans[index] = nums[i] * nums[i];
+                i--;
+            } else if(nums[i] * nums[i] < nums[j] * nums[j]) {
+                ans[index] = nums[i] * nums[i];
+                i--;
+            } else {
+                ans[index] = nums[j] * nums[j];
+                j++;
+            }
+            index++;
+        }
+        return ans;
+    }
+}
+```
+
+#### [189. 轮转数组](https://leetcode-cn.com/problems/rotate-array/)
+
+给你一个数组，将数组中的元素向右轮转 k 个位置，其中 k 是非负数。
+
+示例 1:
+
+```
+输入: nums = [1,2,3,4,5,6,7], k = 3
+输出: [5,6,7,1,2,3,4]
+解释:
+向右轮转 1 步: [7,1,2,3,4,5,6]
+向右轮转 2 步: [6,7,1,2,3,4,5]
+向右轮转 3 步: [5,6,7,1,2,3,4]
+```
+
+示例 2:
+
+```
+输入：nums = [-1,-100,3,99], k = 2
+输出：[3,99,-1,-100]
+解释: 
+向右轮转 1 步: [99,-1,-100,3]
+向右轮转 2 步: [3,99,-1,-100]
+```
+
+
+提示：
+
+```
+1 <= nums.length <= 105
+-231 <= nums[i] <= 231 - 1
+0 <= k <= 105
+```
+
+
+进阶：
+
+```
+尽可能想出更多的解决方案，至少有 三种 不同的方法可以解决这个问题。
+你可以使用空间复杂度为 O(1) 的 原地 算法解决这个问题吗？
+```
+
+```java
+// 自己的答案
+class Solution {
+    public void rotate(int[] nums, int k) {
+        int len = nums.length;
+        // System.out.println(len);
+        int[] tmp = new int[len];
+        int t;
+        for(int i = 0; i < len; i++) {
+            if(i + k >= len) {
+                tmp[(i + k - len) % len] = nums[i];
+            } else {
+                tmp[(i + k) % len] = nums[i];
+            }
+        }
+        for(int i = 0; i < len; i++) {
+            nums[i] = tmp[i];
+        }
+    }
+}
+
+// 方法二：环状替换
+class Solution {
+    public void rotate(int[] nums, int k) {
+        int n = nums.length;
+        k = k % n;
+        int count = gcd(k, n);
+        for(int start = 0; start < count; start++) {
+            int current = start;
+            int prev = nums[start];
+            do{
+                int next = (current + k) % n;
+                int temp = nums[next];
+                nums[next] = prev;
+                prev = temp;
+                current = next;
+            } while(start != current);
+        }
+    }
+
+    public int gcd(int x, int y) {
+        return y > 0 ? gcd(y, x % y) : x;
+     }
+}
+```
+
+#### [剑指 Offer 06. 从尾到头打印链表](https://leetcode-cn.com/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof/)
+
+输入一个链表的头节点，从尾到头反过来返回每个节点的值（用数组返回）。
+
+示例 1：
+
+```
+输入：head = [1,3,2]
+输出：[2,3,1]
+```
+
+
+限制：
+
+```
+0 <= 链表长度 <= 10000
+```
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+// 自己的答案
+class Solution {
+    public int[] reversePrint(ListNode head) {
+        ArrayList temp = new ArrayList<>();
+        // do {
+        //     head = head.next;
+        //     temp.add(head.val);
+        //     System.out.println(head.val);
+        // } while(head.next != null);
+        for(;head != null; head = head.next) {
+            temp.add(head.val);
+            // System.out.println(head.val);
+        }
+        int len = temp.size();
+        int[] res = new int[len];
+        for(int i = 0; i < len; i++) {
+            res[i] = (int)temp.get(len - i - 1);
+        }
+        return res;
+    }
+}
+```
+
+#### [剑指 Offer 24. 反转链表](https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof/)
+
+定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点。
+
+示例:
+
+```
+输入: 1->2->3->4->5->NULL
+输出: 5->4->3->2->1->NULL
+```
+
+
+限制：
+
+```
+0 <= 节点个数 <= 5000
+```
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+// 方法一：迭代
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        while(curr != null) {
+            ListNode next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+}
+
+// 方法二：递归
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        if(head == null || head.next == null) {
+            return head;
+        }
+        ListNode newHead =reverseList(head.next);
+        head.next.next = head;
+        head.next = null;
+        return newHead;
+    }
+}
 ```
 
