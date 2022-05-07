@@ -1411,3 +1411,305 @@ class Solution {
 }
 ```
 
+#### [344. 反转字符串](https://leetcode-cn.com/problems/reverse-string/)
+
+编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 s 的形式给出。
+
+不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。
+
+示例 1：
+
+```
+输入：s = ["h","e","l","l","o"]
+输出：["o","l","l","e","h"]
+```
+
+示例 2：
+
+```
+输入：s = ["H","a","n","n","a","h"]
+输出：["h","a","n","n","a","H"]
+```
+
+
+提示：
+
+```
+1 <= s.length <= 105
+s[i] 都是 ASCII 码表中的可打印字符
+```
+
+```java
+// 双指针
+class Solution {
+    public void reverseString(char[] s) {
+        int len = s.length;
+        // System.out.println(len);
+        for(int left = 0, right = len - 1; left < right; ++left, --right) {
+            char tmp = s[left];
+            s[left] = s[right];
+            s[right] = tmp;
+        }
+    }
+}
+```
+
+#### [557. 反转字符串中的单词 III](https://leetcode-cn.com/problems/reverse-words-in-a-string-iii/)
+
+给定一个字符串 s ，你需要反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。
+
+示例 1：
+
+```
+输入：s = "Let's take LeetCode contest"
+输出："s'teL ekat edoCteeL tsetnoc"
+```
+
+示例 2:
+
+```
+输入： s = "God Ding"
+输出："doG gniD"
+```
+
+
+提示：
+
+```
+1 <= s.length <= 5 * 104
+s 包含可打印的 ASCII 字符。
+s 不包含任何开头或结尾空格。
+s 里 至少 有一个词。
+s 中的所有单词都用一个空格隔开。
+```
+
+```java
+// 自己的答案
+class Solution {
+    public String reverseWords(String s) {
+        String str = "";
+        s += " ";
+        String temp = "";
+        int len = s.length();
+        for(int i = 0; i < len; i++) {
+            temp += s.charAt(i);
+            if(s.charAt(i) == ' ') {
+                // System.out.println("--------");
+                temp = new StringBuffer(temp).reverse().toString();
+                str += temp;
+                // str += " ";
+                temp = "";
+            }
+        }
+        len = str.length();
+        for(int i = 1; i < len; i++) {
+            temp += str.charAt(i);
+        }
+        return temp;
+    }
+}
+
+// 方法二：原地解法
+class Solution {
+    public String reverseWords(String s) {
+        int len = s.length();
+        char[] c = s.toCharArray();
+        int i = 0;
+        while(i < len) {
+            int start = i;
+            while(i < len && c[i] != ' ') {
+                i++;
+            }
+            int left = start, right = i - 1;
+            while(left < right) {
+                char temp = c[left];
+                c[left] = c[right];
+                c[right] = temp;
+                left++;
+                right--;
+            }
+            while(i < len && c[i] == ' ') {
+                i++;
+            }
+        }
+        String str = "";
+        for(i = 0; i < len; i++) {
+            str += c[i];
+        }
+        return str;
+    }
+}
+```
+
+#### [剑指 Offer 03. 数组中重复的数字](https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/)
+
+找出数组中重复的数字。
+
+
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。
+
+示例 1：
+
+```
+输入：
+[2, 3, 1, 0, 2, 5, 3]
+输出：2 或 3 
+```
+
+
+限制：
+
+```
+2 <= n <= 100000
+```
+
+```java
+// 自己的答案
+class Solution {
+    public int findRepeatNumber(int[] nums) {
+        int len = nums.length;
+        Arrays.sort(nums);
+        for(int i = 1; i < len; i++) {
+            if(nums[i] == nums[i - 1]) {
+                return nums[i];
+            }
+        }
+        return 0;
+    }
+}
+
+// 方法一：遍历数组
+class Solution {
+    public int findRepeatNumber(int[] nums) {
+        Set<Integer> set = new HashSet<Integer>();
+        int repeat = -1;
+        for(int num : nums) {
+            if(!set.add(num)) {
+                repeat = num;
+                break;
+            }
+        }
+        return repeat;
+    }
+}
+```
+
+#### [剑指 Offer 53 - I. 在排序数组中查找数字 I](https://leetcode-cn.com/problems/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-lcof/)
+
+统计一个数字在排序数组中出现的次数。
+
+示例 1:
+
+```
+输入: nums = [5,7,7,8,8,10], target = 8
+输出: 2
+```
+
+示例 2:
+
+```
+输入: nums = [5,7,7,8,8,10], target = 6
+输出: 0
+```
+
+
+提示：
+
+```
+0 <= nums.length <= 105
+-109 <= nums[i] <= 109
+nums 是一个非递减数组
+-109 <= target <= 109
+```
+
+```java
+// 自己的答案
+class Solution {
+    public int search(int[] nums, int target) {
+        int count = 0;
+        for(int num : nums) {
+            if(num == target) {
+                count++;
+            }
+        }
+        return count;
+    }
+}
+
+// 二分查找
+class Solution {
+    public int search(int[] nums, int target) {
+        int len = nums.length;
+        int i = 0, j = len - 1;
+        while(i <= j) {
+            int m = (i + j) / 2;
+            if(nums[m] <= target) {
+                i = m + 1;
+            } else {
+                j = m - 1;
+            }
+        }
+        int right = i;
+        if(j >= 0 && nums[j] != target) {
+            return 0;
+        }
+        i = 0;
+        j = len - 1;
+        while(i <= j) {
+            int m = (i + j) / 2;
+            if(nums[m] < target) {
+                i = m + 1;
+            } else {
+                j = m - 1;
+            }
+        }
+        int left = j;
+        return right - left - 1;
+    }
+}
+```
+
+#### [剑指 Offer 53 - II. 0～n-1中缺失的数字](https://leetcode-cn.com/problems/que-shi-de-shu-zi-lcof/)
+
+一个长度为n-1的递增排序数组中的所有数字都是唯一的，并且每个数字都在范围0～n-1之内。在范围0～n-1内的n个数字中有且只有一个数字不在该数组中，请找出这个数字。
+
+示例 1:
+
+```
+输入: [0,1,3]
+输出: 2
+```
+
+示例 2:
+
+```
+输入: [0,1,2,3,4,5,6,7,9]
+输出: 8
+```
+
+
+限制：
+
+```
+1 <= 数组长度 <= 10000
+```
+
+```java
+// 二分
+class Solution {
+    public int missingNumber(int[] nums) {
+        int len = nums.length;
+        int i = 0, j = len - 1;
+        while(i <= j) {
+            int m = (i + j) / 2;
+            if(nums[m] == m) {
+                i = m + 1;
+            } else {
+                j = m - 1;
+            }
+        }
+        return i;
+    }
+}
+```
+
