@@ -1132,3 +1132,282 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer 05. 替换空格](https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/)
+
+请实现一个函数，把字符串 s 中的每个空格替换成"%20"。
+
+示例 1：
+
+```
+输入：s = "We are happy."
+输出："We%20are%20happy."
+```
+
+
+限制：
+
+```
+0 <= s 的长度 <= 10000
+```
+
+```java
+// 自己的代码
+class Solution {
+    public String replaceSpace(String s) {
+        int len = s.length();
+        // System.out.println(len);
+        // System.out.println(s.charAt(1));
+        String temp = new String();
+        for(int i = 0; i < len; i++) {
+            if((char)s.charAt(i) == ' ') {
+                temp += "%20";
+            } else {
+                temp += s.charAt(i);
+            }
+        }
+        return temp;
+    }
+}
+
+// 方法一：字符数组
+class Solution {
+    public String replaceSpace(String s) {
+        int len = s.length();
+        char[] array = new char[len * 3];
+        int size = 0;
+        for(int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if(c == ' ') {
+                array[size++] = '%';
+                array[size++] = '2';
+                array[size++] = '0';
+            } else {
+                array[size++] = c;
+            }
+        }
+        String newStr = new String(array, 0 ,size);
+        return newStr;
+    }
+}
+```
+
+#### [剑指 Offer 58 - II. 左旋转字符串](https://leetcode-cn.com/problems/zuo-xuan-zhuan-zi-fu-chuan-lcof/)
+
+字符串的左旋转操作是把字符串前面的若干个字符转移到字符串的尾部。请定义一个函数实现字符串左旋转操作的功能。比如，输入字符串"abcdefg"和数字2，该函数将返回左旋转两位得到的结果"cdefgab"。
+
+示例 1：
+
+```
+输入: s = "abcdefg", k = 2
+输出: "cdefgab"
+```
+
+示例 2：
+
+```
+输入: s = "lrloseumgh", k = 6
+输出: "umghlrlose"
+```
+
+
+限制：
+
+```
+1 <= k < s.length <= 10000
+```
+
+```java
+// 自己的答案
+class Solution {
+    public String reverseLeftWords(String s, int n) {
+        int len = s.length();
+        n = n % len;
+        String temp = "";
+        for(int i = 0; i < len; i++) {
+            if(i + n < len) {
+                temp += s.charAt(i + n);
+            } else {
+                temp += s.charAt(i + n - len);
+            }
+        }
+        return temp;
+    }
+}
+
+// 方法一：字符串切片
+class Solution {
+    public String reverseLeftWords(String s, int n) {
+        return s.substring(n, s.length()) + s.substring(0, n);
+    }
+}
+
+// 方法二：列表遍历拼接
+class Solution {
+    public String reverseLeftWords(String s, int n) {
+        StringBuilder res = new StringBuilder();
+        for(int i = n; i < n + s.length(); i++) {
+            res.append(s.charAt(i % s.length()));
+        }
+        return res.toString();
+    }
+}
+```
+
+#### [283. 移动零](https://leetcode-cn.com/problems/move-zeroes/)
+
+给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+
+请注意 ，必须在不复制数组的情况下原地对数组进行操作。
+
+示例 1:
+
+```
+输入: nums = [0,1,0,3,12]
+输出: [1,3,12,0,0]
+```
+
+示例 2:
+
+```
+输入: nums = [0]
+输出: [0]
+```
+
+
+提示:
+
+```
+1 <= nums.length <= 104
+-231 <= nums[i] <= 231 - 1
+```
+
+```java
+// 自己的答案
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int len = nums.length;
+        // System.out.println(len);
+        int[] temp = new int[len];
+        for(int i = 0 , j = 0, k = 0; i < len; i++) {
+            if(nums[i] == 0) {
+                temp[len - 1 - j] = nums[i];
+                j++;
+            } else {
+                temp[k] = nums[i];
+                k++;
+            }
+        }
+        for(int i = 0; i < len; i++) {
+            nums[i] = temp[i];
+        }
+    }
+}
+
+// 方法一：双指针
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int len = nums.length, left = 0, right = 0;
+        while(right < len) {
+            if(nums[right] != 0) {
+                swap(nums, left, right);
+                left++;
+            }
+            right++;
+        }
+    }
+    public void swap(int[] nums, int left, int right) {
+        int temp = nums[left];
+        nums[left] = nums[right];
+        nums[right] = temp;
+    }
+}
+```
+
+#### [167. 两数之和 II - 输入有序数组](https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/)
+
+给你一个下标从 1 开始的整数数组 numbers ，该数组已按 非递减顺序排列  ，请你从数组中找出满足相加之和等于目标数 target 的两个数。如果设这两个数分别是 numbers[index1] 和 numbers[index2] ，则 1 <= index1 < index2 <= numbers.length 。
+
+以长度为 2 的整数数组 [index1, index2] 的形式返回这两个整数的下标 index1 和 index2。
+
+你可以假设每个输入 只对应唯一的答案 ，而且你 不可以 重复使用相同的元素。
+
+你所设计的解决方案必须只使用常量级的额外空间。
+
+
+示例 1：
+
+```
+输入：numbers = [2,7,11,15], target = 9
+输出：[1,2]
+解释：2 与 7 之和等于目标数 9 。因此 index1 = 1, index2 = 2 。返回 [1, 2] 。
+```
+
+示例 2：
+
+```
+输入：numbers = [2,3,4], target = 6
+输出：[1,3]
+解释：2 与 4 之和等于目标数 6 。因此 index1 = 1, index2 = 3 。返回 [1, 3] 。
+```
+
+示例 3：
+
+```
+输入：numbers = [-1,0], target = -1
+输出：[1,2]
+解释：-1 与 0 之和等于目标数 -1 。因此 index1 = 1, index2 = 2 。返回 [1, 2] 。
+```
+
+
+提示：
+
+```
+2 <= numbers.length <= 3 * 104
+-1000 <= numbers[i] <= 1000
+numbers 按 非递减顺序 排列
+-1000 <= target <= 1000
+仅存在一个有效答案
+```
+
+```java
+// 自己的答案(二分)
+class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        int len = numbers.length;
+        for(int i = 0; i < len; i++) {
+            int low = i + 1, high = len - 1;
+            while(low <= high) {
+                int mid = (high - low) / 2 + low;
+                if(numbers[mid] == target - numbers[i]) {
+                    return new int[]{i + 1, mid + 1};
+                } else if(numbers[mid] > target - numbers[i]) {
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            }
+        }
+        return new int[]{-1, -1};
+    }
+}
+
+// 方法二：双指针
+class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        int len = numbers.length;
+        int low = 0, high = len - 1;
+        while(low < high) {
+            int sum = numbers[low] + numbers[high];
+            if(sum == target) {
+                return new int[]{low + 1, high + 1};
+            } else if(sum < target) {
+                low++;
+            } else {
+                high--;
+            }
+        }
+        return new int[] {-1, -1};
+    }
+}
+```
+
