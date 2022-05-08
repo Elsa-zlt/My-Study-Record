@@ -1713,3 +1713,426 @@ class Solution {
 }
 ```
 
+#### [876. 链表的中间结点](https://leetcode-cn.com/problems/middle-of-the-linked-list/)
+
+给定一个头结点为 head 的非空单链表，返回链表的中间结点。
+
+如果有两个中间结点，则返回第二个中间结点。
+
+示例 1：
+
+```
+输入：[1,2,3,4,5]
+输出：此列表中的结点 3 (序列化形式：[3,4,5])
+返回的结点值为 3 。 (测评系统对该结点序列化表述是 [3,4,5])。
+注意，我们返回了一个 ListNode 类型的对象 ans，这样：
+ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, 以及 ans.next.next.next = NULL.
+```
+
+示例 2：
+
+```
+输入：[1,2,3,4,5,6]
+输出：此列表中的结点 4 (序列化形式：[4,5,6])
+由于该列表有两个中间结点，值分别为 3 和 4，我们返回第二个结点。
+```
+
+
+提示：
+
+```
+给定链表的结点数介于 1 和 100 之间。
+```
+
+```java
+// 自己的答案
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode middle = head;
+        int count = 0;
+        while(head != null) {
+            count++;
+            // System.out.println(head.val);
+            head = head.next;
+        }
+        int mid;
+        if(count % 2 != 0) {
+            mid = (count + 1) / 2;
+        } else {
+            mid = count / 2 + 1;
+        }
+        int check = 0;
+        while(middle != null) {
+            check++;
+            if(check == mid) {
+                System.out.println(middle.val);
+                return middle;
+            }
+            middle = middle.next;
+        }
+        return middle;
+    }
+}
+
+// 方法一：数组
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode[] A = new ListNode[100];
+        int t = 0;
+        while(head != null) {
+            A[t++] = head;
+            head = head.next;
+        }
+        return A[t / 2];
+    }
+}
+
+// 方法二：单指针法
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        int n = 0;
+        ListNode cur = head;
+        while(cur != null) {
+            n++;
+            cur = cur.next;
+        }
+        int k = 0;
+        cur = head;
+        while(k < n / 2) {
+            k++;
+            cur = cur.next;
+        }
+        return cur;
+    }
+}
+
+// 方法三：快慢指针法
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode slow = head, fast = head;
+        while(fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+}
+```
+
+#### [19. 删除链表的倒数第 N 个结点](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/)
+
+给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+
+示例 1：
+
+```
+输入：head = [1,2,3,4,5], n = 2
+输出：[1,2,3,5]
+```
+
+
+示例 2：
+
+```
+输入：head = [1], n = 1
+输出：[]
+```
+
+示例 3：
+
+```
+输入：head = [1,2], n = 1
+输出：[1]
+```
+
+
+提示：
+
+```
+链表中结点的数目为 sz
+1 <= sz <= 30
+0 <= Node.val <= 100
+1 <= n <= sz
+```
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+// 方法一：计算链表长度
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0, head);
+        int len = getLength(head);
+        ListNode cur = dummy;
+        for(int i = 1; i < len - n + 1; i++) {
+            cur = cur.next;
+        }
+        cur.next = cur.next.next;
+        ListNode ans = dummy.next;
+        return ans;
+    }
+
+    public int getLength(ListNode head) {
+        int len = 0;
+        while(head != null) {
+            len++;
+            head = head.next;
+        }
+        return len;
+    }
+}
+
+// 方法二：栈
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0, head);
+        Deque<ListNode> stack = new LinkedList<ListNode>();
+        ListNode cur = dummy;
+        while(cur != null) {
+            stack.push(cur);
+            cur = cur.next;
+        }
+        for(int i = 0; i < n; i++) {
+            stack.pop();
+        }
+        ListNode prev = stack.peek();
+        prev.next = prev.next.next;
+        ListNode ans = dummy.next;
+        return ans;
+    }
+}
+
+// 方法三：双指针
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0, head);
+        ListNode first = head;
+        ListNode second = dummy;
+        for(int i = 0; i < n; i++) {
+            first = first.next;
+        }
+        while(first != null) {
+            first = first.next;
+            second = second.next;
+        }
+        second.next = second.next.next;
+        ListNode ans = dummy.next;
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer 04. 二维数组中的查找](https://leetcode-cn.com/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
+
+在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个高效的函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
+
+示例:
+
+```
+现有矩阵 matrix 如下：
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
+给定 target = 5，返回 true。
+给定 target = 20，返回 false。
+```
+
+```java
+// 方法一：暴力
+class Solution {
+    public boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return false;
+        }
+        int len = matrix.length;
+        int kuan = matrix[0].length;
+        for(int i = 0; i < len; i++) {
+            for(int j = 0; j < kuan; j++) {
+                if(matrix[i][j] == target) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+// 方法二：线性查找
+class Solution {
+    public boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return false;
+        }
+        int rows = matrix.length;
+        int columns = matrix[0].length;
+        int row = 0;
+        int column = columns - 1;
+        while(row < rows && column >= 0) {
+            int num = matrix[row][column];
+            if(num == target) {
+                return true;
+            } else if(num > target) {
+                column--;
+            } else {
+                row++;
+            }
+        }
+        return false;
+    }
+}
+```
+
+#### [剑指 Offer 11. 旋转数组的最小数字](https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/)
+
+把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。
+
+给你一个可能存在 重复 元素值的数组 numbers ，它原来是一个升序排列的数组，并按上述情形进行了一次旋转。请返回旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一次旋转，该数组的最小值为 1。  
+
+注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]] 。
+
+示例 1：
+
+```
+输入：numbers = [3,4,5,1,2]
+输出：1
+```
+
+示例 2：
+
+```
+输入：numbers = [2,2,2,0,1]
+输出：0
+```
+
+
+提示：
+
+```
+n == numbers.length
+1 <= n <= 5000
+-5000 <= numbers[i] <= 5000
+numbers 原来是一个升序排序的数组，并进行了 1 至 n 次旋转
+```
+
+```java
+// 自己的答案
+class Solution {
+    public int minArray(int[] numbers) {
+        int len = numbers.length;
+        if(len == 1) {
+            return numbers[0];
+        }
+        if(numbers[0] < numbers[len - 1]) {
+            return numbers[0];
+        }
+        for(int i = len - 1; i >= 1; i--) {
+            if(numbers[i] < numbers[i - 1]) {
+                return numbers[i];
+            }
+        }
+        if(numbers[0] == numbers[1]) {
+            return numbers[0];
+        }
+        return 1;
+    }
+}
+
+// 二分查找
+class Solution {
+    public int minArray(int[] numbers) {
+        int low = 0;
+        int high = numbers.length - 1;
+        while (low < high) {
+            int pivot = low + (high - low) / 2;
+            if (numbers[pivot] < numbers[high]) {
+                high = pivot;
+            } else if (numbers[pivot] > numbers[high]) {
+                low = pivot + 1;
+            } else {
+                high -= 1;
+            }
+        }
+        return numbers[low];
+    }
+}
+```
+
+#### [剑指 Offer 50. 第一个只出现一次的字符](https://leetcode-cn.com/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
+
+在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。
+
+示例 1:
+
+```
+输入：s = "abaccdeff"
+输出：'b'
+```
+
+示例 2:
+
+```
+输入：s = "" 
+输出：' '
+```
+
+
+限制：
+
+```
+0 <= s 的长度 <= 50000
+```
+
+```java
+// hash表
+class Solution {
+    public char firstUniqChar(String s) {
+        HashMap<Character, Boolean> dic = new HashMap<>();
+        char[] sc = s.toCharArray();
+        for(char c : sc)
+            // dic.containsKey(c)：如果dic里面已经存在，就返回true
+            // !dic.containsKey(c)：即存在就为false
+            dic.put(c, !dic.containsKey(c));
+        for(char c : sc)
+            // 遍历第一个为true的hash表
+            if(dic.get(c)) return c;
+        return ' ';
+    }
+}
+
+// 有序hash表
+class Solution {
+    public char firstUniqChar(String s) {
+        Map<Character, Boolean> dic = new LinkedHashMap<>();
+        char[] sc = s.toCharArray();
+        for(char c : sc)
+            dic.put(c, !dic.containsKey(c));
+        for(Map.Entry<Character, Boolean> d : dic.entrySet()){
+           if(d.getValue()) return d.getKey();
+        }
+        return ' ';
+    }
+}
+```
+
