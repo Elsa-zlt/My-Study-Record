@@ -2136,3 +2136,309 @@ class Solution {
 }
 ```
 
+#### [3. 无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)
+
+给定一个字符串 s ，请你找出其中不含有重复字符的 最长子串 的长度。
+
+示例 1:
+
+```
+输入: s = "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+```
+
+示例 2:
+
+```
+输入: s = "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+```
+
+示例 3:
+
+```
+输入: s = "pwwkew"
+输出: 3
+解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+     请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+```
+
+
+提示：
+
+```
+0 <= s.length <= 5 * 104
+s 由英文字母、数字、符号和空格组成
+```
+
+```java
+// 方法一：滑动窗口
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        // 哈希集合，记录每个字符是否出现过
+        Set<Character> occ = new HashSet<Character>();
+        int len = s.length();
+        // 右指针，初始值为-1，相当于我们在字符串的左侧，还没有开始移动
+        int rk = -1, ans = 0;
+        for(int i = 0; i < len; i++) {
+            if(i != 0) {
+                // 左指针向右移动一格，移除一个字符
+                occ.remove(s.charAt(i - 1));
+            }
+            while(rk + 1 < len && !occ.contains(s.charAt(rk + 1))) {
+                // 不断地移动右指针
+                occ.add(s.charAt(rk + 1));
+                rk++;
+            }
+            ans = Math.max(ans, rk - i + 1);
+        }
+        return ans;
+    }
+}
+```
+
+#### [567. 字符串的排列](https://leetcode.cn/problems/permutation-in-string/)
+
+给你两个字符串 s1 和 s2 ，写一个函数来判断 s2 是否包含 s1 的排列。如果是，返回 true ；否则，返回 false 。
+
+换句话说，s1 的排列之一是 s2 的 子串 。
+
+示例 1：
+
+```
+输入：s1 = "ab" s2 = "eidbaooo"
+输出：true
+解释：s2 包含 s1 的排列之一 ("ba").
+```
+
+示例 2：
+
+```
+输入：s1= "ab" s2 = "eidboaoo"
+输出：false
+```
+
+
+提示：
+
+```
+1 <= s1.length, s2.length <= 104
+s1 和 s2 仅包含小写字母
+```
+
+```java
+// 滑动窗口
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        int len1 = s1.length(), len2 = s2.length();
+        if(len1 > len2) {
+            return false;
+        }
+        int[] cnt1 = new int[26];
+        int[] cnt2 = new int[26];
+        for(int i = 0; i < len1; i++) {
+            cnt1[s1.charAt(i) - 'a']++;
+            cnt2[s2.charAt(i) - 'a']++;
+        }
+        if(Arrays.equals(cnt1, cnt2)) {
+            return true;
+        }
+        for(int i = len1; i < len2; i++) {
+            cnt2[s2.charAt(i) - 'a']++;
+            cnt2[s2.charAt(i - len1) - 'a']--;
+            if(Arrays.equals(cnt1, cnt2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+
+#### [剑指 Offer 32 - I. 从上到下打印二叉树](https://leetcode.cn/problems/cong-shang-dao-xia-da-yin-er-cha-shu-lcof/)
+
+从上到下打印出二叉树的每个节点，同一层的节点按照从左到右的顺序打印。
+
+例如:
+
+```
+给定二叉树: [3,9,20,null,null,15,7],
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回：
+[3,9,20,15,7]
+```
+
+
+提示：
+
+```
+节点总数 <= 1000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+ // 广度优先搜索（BFS）
+class Solution {
+    public int[] levelOrder(TreeNode root) {
+        if(root == null) return new int[0];
+        Queue<TreeNode> queue = new LinkedList<>(){{ add(root); }};
+        ArrayList<Integer> ans = new ArrayList<>();
+        while(!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            ans.add(node.val);
+            if(node.left != null) queue.add(node.left);
+            if(node.right != null) queue.add(node.right);
+        }
+        int[] res = new int[ans.size()];
+        for(int i = 0; i < ans.size(); i++)
+            res[i] = ans.get(i);
+        return res;
+    }
+}
+```
+
+#### [剑指 Offer 32 - II. 从上到下打印二叉树 II](https://leetcode.cn/problems/cong-shang-dao-xia-da-yin-er-cha-shu-ii-lcof/)
+
+从上到下按层打印二叉树，同一层的节点按从左到右的顺序打印，每一层打印到一行。
+
+例如:
+
+```
+给定二叉树: [3,9,20,null,null,15,7],
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+返回其层次遍历结果：
+
+```
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+```
+
+
+提示：
+
+```
+节点总数 <= 1000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+// 广度优先搜索
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> ret = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return ret;
+        }
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            List<Integer> level = new ArrayList<Integer>();
+            int currentLevelSize = queue.size();
+            for (int i = 1; i <= currentLevelSize; ++i) {
+                TreeNode node = queue.poll();
+                level.add(node.val);
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+            ret.add(level);
+        }
+        return ret;
+    }
+}
+```
+
+#### [剑指 Offer 32 - III. 从上到下打印二叉树 III](https://leetcode.cn/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/)
+
+请实现一个函数按照之字形顺序打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右到左的顺序打印，第三行再按照从左到右的顺序打印，其他行以此类推。
+
+例如:
+
+```
+给定二叉树: [3,9,20,null,null,15,7],
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回其层次遍历结果：
+[
+  [3],
+  [20,9],
+  [15,7]
+]
+```
+
+
+提示：
+
+```
+节点总数 <= 1000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+// 广度优先搜索
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        List<List<Integer>> res = new ArrayList<>();
+        if(root != null) queue.add(root);
+        while(!queue.isEmpty()) {
+            LinkedList<Integer> tmp = new LinkedList<>();
+            for(int i = queue.size(); i > 0; i--) {
+                TreeNode node = queue.poll();
+                if(res.size() % 2 == 0) tmp.addLast(node.val); // 偶数层 -> 队列头部
+                else tmp.addFirst(node.val); // 奇数层 -> 队列尾部
+                if(node.left != null) queue.add(node.left);
+                if(node.right != null) queue.add(node.right);
+            }
+            res.add(tmp);
+        }
+        return res;
+    }
+}
+```
+
