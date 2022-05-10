@@ -2766,6 +2766,7 @@ grid[i][j] 为 0 或 1
 ```
 
 ```java
+// DFS
 class Solution {
     public int maxAreaOfIsland(int[][] grid) {
         int ans = 0;
