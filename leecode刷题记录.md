@@ -2442,3 +2442,355 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer 26. 树的子结构](https://leetcode.cn/problems/shu-de-zi-jie-gou-lcof/)
+
+输入两棵二叉树A和B，判断B是不是A的子结构。(约定空树不是任意一个树的子结构)
+
+B是A的子结构， 即 A中有出现和B相同的结构和节点值。
+
+例如:
+
+```
+给定的树 A:
+     3
+    / \
+   4   5
+  / \
+ 1   2
+给定的树 B：
+   4 
+  /
+ 1
+返回 true，因为 B 与 A 的一个子树拥有相同的结构和节点值。
+```
+
+示例 1：
+
+```
+输入：A = [1,2,3], B = [3,1]
+输出：false
+```
+
+示例 2：
+
+```
+输入：A = [3,4,5,1,2], B = [4,1]
+输出：true
+```
+
+限制：
+
+```
+0 <= 节点个数 <= 10000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        return (A != null && B != null) && (recur(A, B) || isSubStructure(A.left, B) || isSubStructure(A.right, B));
+    }
+    boolean recur(TreeNode A, TreeNode B) {
+        if(B == null) return true;
+        if(A == null || A.val != B.val) return false;
+        return recur(A.left, B.left) && recur(A.right, B.right);
+    }
+}
+```
+
+#### [剑指 Offer 27. 二叉树的镜像](https://leetcode.cn/problems/er-cha-shu-de-jing-xiang-lcof/)
+
+请完成一个函数，输入一个二叉树，该函数输出它的镜像。
+
+例如输入：
+
+```
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+```
+
+镜像输出：
+
+```
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+```
+
+示例 1：
+
+```
+输入：root = [4,2,7,1,3,6,9]
+输出：[4,7,2,9,6,3,1]
+```
+
+
+限制：
+
+```
+0 <= 节点个数 <= 1000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode mirrorTree(TreeNode root) {
+        if(root == null) {
+            return null;
+        }
+        TreeNode left = mirrorTree(root.left);
+        TreeNode right = mirrorTree(root.right);
+        root.left = right;
+        root.right = left;
+        return root;
+    }
+}
+```
+
+#### [剑指 Offer 28. 对称的二叉树](https://leetcode.cn/problems/dui-cheng-de-er-cha-shu-lcof/)
+
+请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
+
+```
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+    1
+   / \
+  2   2
+   \   \
+   3    3 
+```
+
+示例 1：
+
+```
+输入：root = [1,2,2,3,4,4,3]
+输出：true
+```
+
+示例 2：
+
+```
+输入：root = [1,2,2,null,3,null,3]
+输出：false
+```
+
+
+限制：
+
+```
+0 <= 节点个数 <= 1000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        return check(root, root);
+    }
+    public boolean check(TreeNode p, TreeNode q) {
+        if(p == null && q == null) {
+            return true;
+        }
+        if(p == null || q == null) {
+            return false;
+        }
+        return p.val == q.val && check(p.left, q.right) && check(p.right, q.left);
+    }
+} 
+```
+
+#### [733. 图像渲染](https://leetcode.cn/problems/flood-fill/)
+
+有一幅以 m x n 的二维整数数组表示的图画 image ，其中 image[i][j] 表示该图画的像素值大小。
+
+你也被给予三个整数 sr ,  sc 和 newColor 。你应该从像素 image[sr][sc] 开始对图像进行 上色填充 。
+
+为了完成 上色工作 ，从初始像素开始，记录初始坐标的 上下左右四个方向上 像素值与初始坐标相同的相连像素点，接着再记录这四个方向上符合条件的像素点与他们对应 四个方向上 像素值与初始坐标相同的相连像素点，……，重复该过程。将所有有记录的像素点的颜色值改为 newColor 。
+
+最后返回 经过上色渲染后的图像 。
+
+示例 1:
+
+```
+输入: image = [[1,1,1],[1,1,0],[1,0,1]]，sr = 1, sc = 1, newColor = 2
+输出: [[2,2,2],[2,2,0],[2,0,1]]
+解析: 在图像的正中间，(坐标(sr,sc)=(1,1)),在路径上所有符合条件的像素点的颜色都被更改成2。
+注意，右下角的像素没有更改为2，因为它不是在上下左右四个方向上与初始点相连的像素点。
+```
+
+示例 2:
+
+```
+输入: image = [[0,0,0],[0,0,0]], sr = 0, sc = 0, newColor = 2
+输出: [[2,2,2],[2,2,2]]
+```
+
+
+提示:
+
+```
+m == image.length
+n == image[i].length
+1 <= m, n <= 50
+0 <= image[i][j], newColor < 216
+0 <= sr < m
+0 <= sc < n
+```
+
+```java
+// BFS
+class Solution {
+    int[] dx = {1, 0, 0, -1};
+    int[] dy = {0, 1, -1, 0};
+
+    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+        int currColor = image[sr][sc];
+        if(currColor == newColor) {
+            return image;
+        }
+        int n = image.length, m = image[0].length;
+        Queue<int[]> queue = new LinkedList<int[]>();
+        queue.offer(new int[]{sr, sc});
+        image[sr][sc] = newColor;
+        while(!queue.isEmpty()) {
+            int[] cell = queue.poll();
+            int x = cell[0], y = cell[1];
+            for(int i = 0; i < 4; i++) {
+                int mx = x + dx[i], my = y + dy[i];
+                if(mx >= 0 && mx < n && my >= 0 && my < m && image[mx][my] == currColor) {
+                    queue.offer(new int[]{mx, my});
+                    image[mx][my] = newColor;
+                }
+            }
+        }
+        return image;
+    }
+}
+
+// DFS
+class Solution {
+    int[] dx = {1, 0, 0, -1};
+    int[] dy = {0, 1, -1, 0};
+
+    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+        int currColor = image[sr][sc];
+        if(currColor != newColor) {
+            dfs(image, sr, sc, currColor, newColor);
+        }
+        return image;
+    }
+
+    public void dfs(int[][] image, int x, int y, int color, int newColor) {
+        if(image[x][y] == color) {
+            image[x][y] = newColor;
+            for(int i = 0; i < 4; i++) {
+                int mx = x + dx[i], my = y + dy[i];
+                if(mx >= 0 && mx < image.length && my >= 0 && my < image[0].length) {
+                    dfs(image, mx, my, color, newColor);
+                }
+            }
+        }
+    }
+}
+```
+
+#### [695. 岛屿的最大面积](https://leetcode.cn/problems/max-area-of-island/)
+
+给你一个大小为 m x n 的二进制矩阵 grid 。
+
+岛屿 是由一些相邻的 1 (代表土地) 构成的组合，这里的「相邻」要求两个 1 必须在 水平或者竖直的四个方向上 相邻。你可以假设 grid 的四个边缘都被 0（代表水）包围着。
+
+岛屿的面积是岛上值为 1 的单元格的数目。
+
+计算并返回 grid 中最大的岛屿面积。如果没有岛屿，则返回面积为 0 。
+
+示例 1：
+
+```
+输入：grid = [[0,0,1,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,1,1,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,1,1,0,0,1,0,1,0,0],[0,1,0,0,1,1,0,0,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,0,0,0,0,0,0,1,1,0,0,0,0]]
+输出：6
+解释：答案不应该是 11 ，因为岛屿只能包含水平或垂直这四个方向上的 1 。
+```
+
+
+示例 2：
+
+```
+输入：grid = [[0,0,0,0,0,0,0,0]]
+输出：0
+```
+
+
+提示：
+
+```
+m == grid.length
+n == grid[i].length
+1 <= m, n <= 50
+grid[i][j] 为 0 或 1
+```
+
+```java
+class Solution {
+    public int maxAreaOfIsland(int[][] grid) {
+        int ans = 0;
+        for (int i = 0; i != grid.length; ++i) {
+            for (int j = 0; j != grid[0].length; ++j) {
+                ans = Math.max(ans, dfs(grid, i, j));
+            }
+        }
+        return ans;
+    }
+
+    public int dfs(int[][] grid, int cur_i, int cur_j) {
+        if (cur_i < 0 || cur_j < 0 || cur_i == grid.length || cur_j == grid[0].length || grid[cur_i][cur_j] != 1) {
+            return 0;
+        }
+        grid[cur_i][cur_j] = 0;
+        int[] di = {0, 0, 1, -1};
+        int[] dj = {1, -1, 0, 0};
+        int ans = 1;
+        for (int index = 0; index != 4; ++index) {
+            int next_i = cur_i + di[index], next_j = cur_j + dj[index];
+            ans += dfs(grid, next_i, next_j);
+        }
+        return ans;
+    }
+}
+```
+
