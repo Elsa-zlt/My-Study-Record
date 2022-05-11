@@ -2795,3 +2795,354 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer 10- I. 斐波那契数列](https://leetcode.cn/problems/fei-bo-na-qi-shu-lie-lcof/)
+
+写一个函数，输入 n ，求斐波那契（Fibonacci）数列的第 n 项（即 F(N)）。斐波那契数列的定义如下：
+
+F(0) = 0,   F(1) = 1
+F(N) = F(N - 1) + F(N - 2), 其中 N > 1.
+斐波那契数列由 0 和 1 开始，之后的斐波那契数就是由之前的两数相加而得出。
+
+答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+
+示例 1：
+
+```
+输入：n = 2
+输出：1
+```
+
+示例 2：
+
+```
+输入：n = 5
+输出：5
+```
+
+
+提示：
+
+```
+0 <= n <= 100
+```
+
+```java
+class Solution {
+    // private int[] res = new int[101];
+    public int fib(int n) {
+        if(n == 0) {
+            return 0;
+        }
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        dp[1] = 1;
+        for(int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+            dp[i] %= 1000000007;
+        }
+        return dp[n];
+    }
+}
+```
+
+#### [剑指 Offer 10- II. 青蛙跳台阶问题](https://leetcode.cn/problems/qing-wa-tiao-tai-jie-wen-ti-lcof/)
+
+一只青蛙一次可以跳上1级台阶，也可以跳上2级台阶。求该青蛙跳上一个 n 级的台阶总共有多少种跳法。
+
+答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+
+示例 1：
+
+```
+输入：n = 2
+输出：2
+```
+
+示例 2：
+
+```
+输入：n = 7
+输出：21
+```
+
+示例 3：
+
+```
+输入：n = 0
+输出：1
+```
+
+提示：
+
+```
+0 <= n <= 100
+```
+
+```java
+class Solution {
+    public int numWays(int n) {
+        if(n == 0) {
+            return 1;
+        }
+        int dp[] = new int[n + 1];
+        dp[1] = 1;
+        if(n >= 2) {
+            dp[2] = 2;
+        }
+        for(int i = 3; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+            dp[i] %= 1000000007;
+        }
+        return dp[n];
+    }
+}
+```
+
+#### [剑指 Offer 63. 股票的最大利润](https://leetcode.cn/problems/gu-piao-de-zui-da-li-run-lcof/)
+
+假设把某股票的价格按照时间先后顺序存储在数组中，请问买卖该股票一次可能获得的最大利润是多少？
+
+示例 1:
+
+```
+输入: [7,1,5,3,6,4]
+输出: 5
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格。
+```
+
+示例 2:
+
+```
+输入: [7,6,4,3,1]
+输出: 0
+解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+```
+
+
+限制：
+
+```
+0 <= 数组长度 <= 10^5
+```
+
+```java
+// 暴力
+class Solution {
+    public int maxProfit(int[] prices) {
+        int max = 0;
+        int len = prices.length;
+        for(int i = 0; i < len - 1; i++) {
+            for(int j = i + 1; j < len; j++) {
+                int profit = prices[j] - prices[i];
+                if(profit > max) {
+                    max = profit;
+                }
+            }
+        }
+        return max;
+    }
+}
+
+// 一次遍历
+class Solution {
+    public int maxProfit(int[] prices) {
+        int min = Integer.MAX_VALUE;
+        int max = 0;
+        int len = prices.length;
+        for(int i = 0; i < len; i++) {
+            if(prices[i] < min) {
+                min = prices[i];
+            } else if(prices[i] - min > max) {
+                max = prices[i] - min;
+            }
+        }
+        return max;
+    }
+}
+
+// 动态规划
+class Solution {
+    public int maxProfit(int[] prices) {
+        int len = prices.length;
+        // 没有卖出的可能性
+        if(len < 2) {
+            return 0;
+        }
+        // 定义状态，第i天卖出的最大收益
+        int[] dp = new int[len + 1];
+        // 初始边界
+        dp[0] = 0;
+        // 成本
+        int cost = prices[0];
+        for(int i = 1; i < len; i++) {
+            dp[i] = Math.max(dp[i - 1], prices[i] - cost);
+            // 选择较小的成本买入
+            cost = Math.min(cost, prices[i]);
+        }
+        return dp[len - 1];
+    }
+}
+```
+
+#### [617. 合并二叉树](https://leetcode.cn/problems/merge-two-binary-trees/)
+
+给你两棵二叉树： root1 和 root2 。
+
+想象一下，当你将其中一棵覆盖到另一棵之上时，两棵树上的一些节点将会重叠（而另一些不会）。你需要将这两棵树合并成一棵新二叉树。合并的规则是：如果两个节点重叠，那么将这两个节点的值相加作为合并后节点的新值；否则，不为 null 的节点将直接作为新二叉树的节点。
+
+返回合并后的二叉树。
+
+注意: 合并过程必须从两个树的根节点开始。
+
+示例 1：
+
+```
+输入：root1 = [1,3,2,5], root2 = [2,1,3,null,4,null,7]
+输出：[3,4,5,5,4,null,7]
+```
+
+
+示例 2：
+
+```
+输入：root1 = [1], root2 = [1,2]
+输出：[2,2]
+```
+
+
+提示：
+
+```
+两棵树中的节点数目在范围 [0, 2000] 内
+-104 <= Node.val <= 104
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
+        if (t1 == null) {
+            return t2;
+        }
+        if (t2 == null) {
+            return t1;
+        }
+        TreeNode merged = new TreeNode(t1.val + t2.val);
+        merged.left = mergeTrees(t1.left, t2.left);
+        merged.right = mergeTrees(t1.right, t2.right);
+        return merged;
+    }
+}
+```
+
+#### [116. 填充每个节点的下一个右侧节点指针](https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/)
+
+给定一个 完美二叉树 ，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：
+
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。
+
+初始状态下，所有 next 指针都被设置为 NULL。
+
+示例 1：
+
+```
+输入：root = [1,2,3,4,5,6,7]
+输出：[1,#,2,3,#,4,5,6,7,#]
+解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。序列化的输出按层序遍历排列，同一层节点由 next 指针连接，'#' 标志着每一层的结束。
+```
+
+示例 2:
+
+```
+输入：root = []
+输出：[]
+```
+
+
+提示：
+
+```
+树中节点的数量在 [0, 212 - 1] 范围内
+-1000 <= node.val <= 1000
+```
+
+```java
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node next;
+
+    public Node() {}
+    
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _left, Node _right, Node _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+*/
+class Solution {
+    public Node connect(Node root) {
+        if (root == null) {
+            return root;
+        }
+        // 初始化队列同时将第一层节点加入队列中，即根节点
+        Queue<Node> queue = new LinkedList<Node>(); 
+        queue.add(root);
+        // 外层的 while 循环迭代的是层数
+        while (!queue.isEmpty()) {
+            // 记录当前队列大小
+            int size = queue.size();
+            // 遍历这一层的所有节点
+            for (int i = 0; i < size; i++) {
+                // 从队首取出元素
+                Node node = queue.poll();
+                // 连接
+                if (i < size - 1) {
+                    node.next = queue.peek();
+                }
+                // 拓展下一层节点
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+            }
+        }
+        // 返回根节点
+        return root;
+    }
+}
+
+```
+
