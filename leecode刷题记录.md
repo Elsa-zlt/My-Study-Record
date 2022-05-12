@@ -3143,6 +3143,278 @@ class Solution {
         return root;
     }
 }
+```
 
+#### [542. 01 矩阵](https://leetcode.cn/problems/01-matrix/)
+
+给定一个由 0 和 1 组成的矩阵 mat ，请输出一个大小相同的矩阵，其中每一个格子是 mat 中对应位置元素到最近的 0 的距离。
+
+两个相邻元素间的距离为 1 。
+
+示例 1：
+
+```
+输入：mat = [[0,0,0],[0,1,0],[0,0,0]]
+输出：[[0,0,0],[0,1,0],[0,0,0]]
+```
+
+示例 2：
+
+```
+输入：mat = [[0,0,0],[0,1,0],[1,1,1]]
+输出：[[0,0,0],[0,1,0],[1,2,1]]
+```
+
+
+提示：
+
+```
+m == mat.length
+n == mat[i].length
+1 <= m, n <= 104
+1 <= m * n <= 104
+mat[i][j] is either 0 or 1.
+mat 中至少有一个 0 
+```
+
+```java
+// 广度优先搜索
+class Solution {
+    static int[][] dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    public int[][] updateMatrix(int[][] mat) {
+        int m = mat.length, n = mat[0].length;
+        int[][] dist = new int[m][n];
+        boolean[][] seen = new boolean[m][n];
+        Queue<int[]> queue = new LinkedList<int[]>();
+        // 将所有的0添加到初始队列中
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(mat[i][j] == 0) {
+                    queue.offer(new int[]{i, j});
+                    seen[i][j] = true;
+                }
+            }
+        }
+        // 广度优先搜索
+        while(!queue.isEmpty()) {
+            int[] cell = queue.poll();
+            int i = cell[0], j = cell[1];
+            for(int d = 0; d < 4; d++) {
+                int ni = i + dirs[d][0];
+                int nj = j + dirs[d][1];
+                if(ni >= 0 && ni < m && nj >= 0 && nj < n && !seen[ni][nj]) {
+                    dist[ni][nj] = dist[i][j] + 1;
+                    queue.offer(new int[]{ni, nj});
+                    seen[ni][nj] = true;
+                }
+            }
+        }
+        return dist;
+    }
+}
+
+// 动态规划
+class Solution {
+    public int[][] updateMatrix(int[][] mat) {
+        int m = mat.length, n = mat[0].length;
+        int[][] dp = new int[m][n];
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                dp[i][j] = mat[i][j] == 0 ? 0 : 10000;
+            }
+        }
+        // 从左上角开始
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(i - 1 >= 0) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i - 1][j] + 1);
+                }
+                if(j - 1 >= 0) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i][j - 1] + 1);
+                }
+            }
+        }
+        // 从右下角开始
+        for(int i = m - 1; i >= 0; i--) {
+            for(int j = n - 1; j >= 0; j--) {
+                if(i + 1 < m) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i + 1][j] + 1);
+                }
+                if(j + 1 < n) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i][j + 1] + 1);
+                }
+            }
+        }
+        return dp;
+    }
+}
+```
+
+#### [994. 腐烂的橘子](https://leetcode.cn/problems/rotting-oranges/)
+
+在给定的 m x n 网格 grid 中，每个单元格可以有以下三个值之一：
+
+值 0 代表空单元格；
+值 1 代表新鲜橘子；
+值 2 代表腐烂的橘子。
+每分钟，腐烂的橘子 周围 4 个方向上相邻 的新鲜橘子都会腐烂。
+
+返回 直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 -1 。
+
+示例 1：
+
+```
+输入：grid = [[2,1,1],[1,1,0],[0,1,1]]
+输出：4
+```
+
+示例 2：
+
+```
+输入：grid = [[2,1,1],[0,1,1],[1,0,1]]
+输出：-1
+解释：左下角的橘子（第 2 行， 第 0 列）永远不会腐烂，因为腐烂只会发生在 4 个正向上。
+```
+
+示例 3：
+
+```
+输入：grid = [[0,2]]
+输出：0
+解释：因为 0 分钟时已经没有新鲜橘子了，所以答案就是 0 。
+```
+
+
+提示：
+
+```
+m == grid.length
+n == grid[i].length
+1 <= m, n <= 10
+grid[i][j] 仅为 0、1 或 2
+```
+
+```java
+class Solution {
+    int[] dr = new int[]{-1, 0, 1, 0};
+    int[] dc = new int[]{0, -1, 0, 1};
+
+    public int orangesRotting(int[][] grid) {
+        int R = grid.length, C = grid[0].length;
+        Queue<Integer> queue = new ArrayDeque<Integer>();
+        Map<Integer, Integer> depth = new HashMap<Integer, Integer>();
+        for (int r = 0; r < R; ++r) {
+            for (int c = 0; c < C; ++c) {
+                if (grid[r][c] == 2) {
+                    int code = r * C + c;
+                    queue.add(code);
+                    depth.put(code, 0);
+                }
+            }
+        }
+        int ans = 0;
+        while (!queue.isEmpty()) {
+            int code = queue.remove();
+            int r = code / C, c = code % C;
+            for (int k = 0; k < 4; ++k) {
+                int nr = r + dr[k];
+                int nc = c + dc[k];
+                if (0 <= nr && nr < R && 0 <= nc && nc < C && grid[nr][nc] == 1) {
+                    grid[nr][nc] = 2;
+                    int ncode = nr * C + nc;
+                    queue.add(ncode);
+                    depth.put(ncode, depth.get(code) + 1);
+                    ans = depth.get(ncode);
+                }
+            }
+        }
+        for (int[] row: grid) {
+            for (int v: row) {
+                if (v == 1) {
+                    return -1;
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer 42. 连续子数组的最大和](https://leetcode.cn/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/)
+
+输入一个整型数组，数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值。
+
+要求时间复杂度为O(n)。
+
+示例1:
+
+```
+输入: nums = [-2,1,-3,4,-1,2,1,-5,4]
+输出: 6
+解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+```
+
+
+提示：
+
+```
+1 <= arr.length <= 10^5
+-100 <= arr[i] <= 100
+```
+
+```java
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int pre = 0, maxAns = nums[0];
+        for (int x : nums) {
+            pre = Math.max(pre + x, x);
+            maxAns = Math.max(maxAns, pre);
+        }
+        return maxAns;
+    }
+}
+```
+
+#### [剑指 Offer 47. 礼物的最大价值](https://leetcode.cn/problems/li-wu-de-zui-da-jie-zhi-lcof/)
+
+在一个 m*n 的棋盘的每一格都放有一个礼物，每个礼物都有一定的价值（价值大于 0）。你可以从棋盘的左上角开始拿格子里的礼物，并每次向右或者向下移动一格、直到到达棋盘的右下角。给定一个棋盘及其上面的礼物的价值，请计算你最多能拿到多少价值的礼物？
+
+示例 1:
+
+```
+输入: 
+[
+  [1,3,1],
+  [1,5,1],
+  [4,2,1]
+]
+输出: 12
+解释: 路径 1→3→5→2→1 可以拿到最多价值的礼物
+```
+
+
+提示：
+
+```
+0 < grid.length <= 200
+0 < grid[0].length <= 200
+```
+
+```java
+class Solution {
+    public int maxValue(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(i == 0 && j == 0) continue;
+                if(i == 0) grid[i][j] += grid[i][j - 1] ;
+                else if(j == 0) grid[i][j] += grid[i - 1][j];
+                else grid[i][j] += Math.max(grid[i][j - 1], grid[i - 1][j]);
+            }
+        }
+        return grid[m - 1][n - 1];
+    }
+}
 ```
 
