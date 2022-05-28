@@ -3706,3 +3706,1217 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer 66. 构建乘积数组](https://leetcode.cn/problems/gou-jian-cheng-ji-shu-zu-lcof/)
+
+给定一个数组 A[0,1,…,n-1]，请构建一个数组 B[0,1,…,n-1]，其中 B[i] 的值是数组 A 中除了下标 i 以外的元素的积, 即 B[i]=A[0]×A[1]×…×A[i-1]×A[i+1]×…×A[n-1]。不能使用除法。
+
+示例:
+
+```
+输入: [1,2,3,4,5]
+输出: [120,60,40,30,24]
+```
+
+
+提示：
+
+```
+所有元素乘积之和不会溢出 32 位整数
+a.length <= 100000
+```
+
+```java
+class Solution {
+    public int[] constructArr(int[] a) {
+        int len = a.length;
+        if(len == 0) return new int[0];
+        int[] b = new int[len];
+        b[0] = 1;
+        int tmp = 1;
+        for(int i = 1; i < len; i++) {
+            b[i] = b[i - 1] * a[i - 1];
+        }
+        for(int i = len - 2; i >= 0; i--) {
+            tmp *= a[i + 1];
+            b[i] *= tmp;
+        }
+        return b;
+    }
+}
+```
+
+#### [剑指 Offer 39. 数组中出现次数超过一半的数字](https://leetcode.cn/problems/shu-zu-zhong-chu-xian-ci-shu-chao-guo-yi-ban-de-shu-zi-lcof/)
+
+数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。
+
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+示例 1:
+
+```
+输入: [1, 2, 3, 2, 2, 2, 5, 4, 2]
+输出: 2
+```
+
+
+限制：
+
+```
+1 <= 数组长度 <= 50000
+```
+
+```java
+class Solution {
+    public Map<Integer, Integer> countNums(int[] nums) {
+        Map<Integer, Integer> counts = new HashMap<Integer, Integer>();
+        for(int num : nums) {
+            if(!counts.containsKey(num)) {
+                counts.put(num, 1);
+            } else {
+                counts.put(num, counts.get(num) + 1);
+            }
+        }
+        return counts;
+    }
+
+    public int majorityElement(int[] nums) {
+        Map<Integer, Integer> counts = countNums(nums);
+        Map.Entry<Integer, Integer> majorityEntry = null;
+        for(Map.Entry<Integer, Integer> entry : counts.entrySet()) {
+            if(majorityEntry == null || entry.getValue() > majorityEntry.getValue()) {
+                majorityEntry = entry;
+            }
+        }
+        return majorityEntry.getKey();
+    }
+}
+```
+
+#### [剑指 Offer 62. 圆圈中最后剩下的数字](https://leetcode.cn/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/)
+
+0,1,···,n-1这n个数字排成一个圆圈，从数字0开始，每次从这个圆圈里删除第m个数字（删除后从下一个数字开始计数）。求出这个圆圈里剩下的最后一个数字。
+
+例如，0、1、2、3、4这5个数字组成一个圆圈，从数字0开始每次删除第3个数字，则删除的前4个数字依次是2、0、4、1，因此最后剩下的数字是3。
+
+示例 1：
+
+```
+输入: n = 5, m = 3
+输出: 3
+```
+
+示例 2：
+
+```
+输入: n = 10, m = 17
+输出: 2
+```
+
+
+限制：
+
+```
+1 <= n <= 10^5
+1 <= m <= 10^6
+```
+
+```java
+class Solution {
+    public int lastRemaining(int n, int m) {
+        int f = 0;
+        for (int i = 2; i != n + 1; ++i) {
+            f = (m + f) % i;
+        }
+        return f;
+    }
+}
+```
+
+#### [剑指 Offer 57 - II. 和为s的连续正数序列](https://leetcode.cn/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
+
+输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。
+
+序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
+
+示例 1：
+
+```
+输入：target = 9
+输出：[[2,3,4],[4,5]]
+```
+
+示例 2：
+
+```
+输入：target = 15
+输出：[[1,2,3,4,5],[4,5,6],[7,8]]
+```
+
+
+限制：
+
+```
+1 <= target <= 10^5
+```
+
+```java
+class Solution {
+    public int[][] findContinuousSequence(int target) {
+        List<int[]> vec = new ArrayList<int[]>();
+        // (target - 1) / 2 等效于 target / 2 下取整
+        int sum = 0, limit = (target - 1) / 2; 
+        for (int i = 1; i <= limit; ++i) {
+            for (int j = i;; ++j) {
+                sum += j;
+                if (sum > target) {
+                    sum = 0;
+                    break;
+                } else if (sum == target) {
+                    int[] res = new int[j - i + 1];
+                    for (int k = i; k <= j; ++k) {
+                        res[k - i] = k;
+                    }
+                    vec.add(res);
+                    sum = 0;
+                    break;
+                }
+            }
+        }
+        return vec.toArray(new int[vec.size()][]);
+    }
+}
+```
+
+#### [剑指 Offer 14- I. 剪绳子](https://leetcode.cn/problems/jian-sheng-zi-lcof/)
+
+给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），每段绳子的长度记为 k[0],k[1]...k[m-1] 。请问 k[0]*k[1]*...*k[m-1] 可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+
+示例 1：
+
+```
+输入: 2
+输出: 1
+解释: 2 = 1 + 1, 1 × 1 = 1
+```
+
+示例 2:
+
+```
+输入: 10
+输出: 36
+解释: 10 = 3 + 3 + 4, 3 × 3 × 4 = 36
+```
+
+提示：
+
+```
+2 <= n <= 58
+```
+
+```java
+class Solution {
+    public int cuttingRope(int n) {
+        if(n <= 3) return n - 1;
+        int a = n / 3, b = n % 3;
+        if(b == 0) return (int)Math.pow(3, a);
+        if(b == 1) return (int)Math.pow(3, a - 1) * 4;
+        return (int)Math.pow(3, a) * 2;
+    }
+}
+```
+
+#### [剑指 Offer 56 - I. 数组中数字出现的次数](https://leetcode.cn/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
+
+一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
+
+示例 1：
+
+```
+输入：nums = [4,1,4,6]
+输出：[1,6] 或 [6,1]
+```
+
+示例 2：
+
+```
+输入：nums = [1,2,10,4,1,4,3,3]
+输出：[2,10] 或 [10,2]
+```
+
+
+限制：
+
+```
+2 <= nums.length <= 10000
+```
+
+```java
+class Solution {
+    public int[] singleNumbers(int[] nums) {
+        Set<Integer> s = new HashSet<Integer>();
+        Set<Integer> r = new HashSet<Integer>();
+        int len = nums.length;
+        for(int i = 0; i < len; i++) {
+            if(!s.contains(nums[i]) && !r.contains(nums[i])) {
+                s.add(nums[i]);
+            } else {
+                r.add(nums[i]);
+                s.remove(nums[i]);
+            }
+        }
+        int i = 0;
+        int[] res = new int[2];
+        for (int st : s) {
+            res[i++] = st;
+		}
+        return res;
+    }
+}
+```
+
+#### [剑指 Offer 56 - II. 数组中数字出现的次数 II](https://leetcode.cn/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-ii-lcof/)
+
+在一个数组 nums 中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
+
+示例 1：
+
+```
+输入：nums = [3,4,3,3]
+输出：4
+```
+
+示例 2：
+
+```
+输入：nums = [9,1,7,9,7,9,7]
+输出：1
+```
+
+
+限制：
+
+```
+1 <= nums.length <= 10000
+1 <= nums[i] < 2^31
+```
+
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int len = nums.length;
+        int res = 0;
+        Map<Integer, Integer> mp = new HashMap<Integer, Integer>();
+        for(int i = 0; i < len; i++) {
+            if(mp.containsKey(nums[i])) {
+                mp.put(nums[i], mp.get(nums[i]) + 1);
+            } else {
+                mp.put(nums[i], 1);
+            }
+        }
+        for(int i = 0; i < len; i++) {
+            if(mp.get(nums[i]) == 1) {
+                res = nums[i];
+            }
+        }
+        return res;
+    }
+}
+```
+
+#### [剑指 Offer 65. 不用加减乘除做加法](https://leetcode.cn/problems/bu-yong-jia-jian-cheng-chu-zuo-jia-fa-lcof/)
+
+写一个函数，求两个整数之和，要求在函数体内不得使用 “+”、“-”、“*”、“/” 四则运算符号。
+
+示例:
+
+```
+输入: a = 1, b = 1
+输出: 2
+```
+
+
+提示：
+
+```
+a, b 均可能是负数或 0
+结果不会溢出 32 位整数
+```
+
+```java
+class Solution {
+    public int add(int a, int b) {
+        while(b != 0) { // 当进位为 0 时跳出
+            int c = (a & b) << 1;  // c = 进位
+            a ^= b; // a = 非进位和
+            b = c; // b = 进位
+        }
+        return a;
+    }
+}
+```
+
+#### [剑指 Offer 15. 二进制中1的个数](https://leetcode.cn/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/)
+
+编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 '1' 的个数（也被称为 汉明重量).）。
+
+提示：
+
+```
+请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。
+在 Java 中，编译器使用 二进制补码 记法来表示有符号整数。因此，在上面的 示例 3 中，输入表示有符号整数 -3。
+```
+
+
+示例 1：
+
+```
+输入：n = 11 (控制台输入 00000000000000000000000000001011)
+输出：3
+解释：输入的二进制串 00000000000000000000000000001011 中，共有三位为 '1'。
+```
+
+示例 2：
+
+```
+输入：n = 128 (控制台输入 00000000000000000000000010000000)
+输出：1
+解释：输入的二进制串 00000000000000000000000010000000 中，共有一位为 '1'。
+```
+
+示例 3：
+
+```
+输入：n = 4294967293 (控制台输入 11111111111111111111111111111101，部分语言中 n = -3）
+输出：31
+解释：输入的二进制串 11111111111111111111111111111101 中，共有 31 位为 '1'。
+```
+
+
+提示：
+
+```
+输入必须是长度为 32 的 二进制串 。
+```
+
+```java
+public class Solution {
+    public int hammingWeight(int n) {
+        int ret = 0;
+        for (int i = 0; i < 32; i++) {
+            if ((n & (1 << i)) != 0) {
+                ret++;
+            }
+        }
+        return ret;
+    }
+}
+```
+
+#### [剑指 Offer 33. 二叉搜索树的后序遍历序列](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/)
+
+输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同。
+
+```
+参考以下这颗二叉搜索树：
+     5
+    / \
+   2   6
+  / \
+ 1   3
+```
+
+示例 1：
+
+```
+输入: [1,6,3,2,5]
+输出: false
+```
+
+示例 2：
+
+```
+输入: [1,3,2,6,5]
+输出: true
+```
+
+
+提示：
+
+```
+数组长度 <= 1000
+```
+
+```java
+class Solution {
+    public boolean verifyPostorder(int[] postorder) {
+        return recur(postorder, 0, postorder.length - 1);
+    }
+    boolean recur(int[] postorder, int i, int j) {
+        if(i >= j) return true;
+        int p = i;
+        while(postorder[p] < postorder[j]) p++;
+        int m = p;
+        while(postorder[p] > postorder[j]) p++;
+        return p == j && recur(postorder, i, m - 1) && recur(postorder, m, j - 1);
+    }
+}
+```
+
+#### [剑指 Offer 16. 数值的整数次方](https://leetcode.cn/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/)
+
+实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，xn）。不得使用库函数，同时不需要考虑大数问题。
+
+示例 1：
+
+```
+输入：x = 2.00000, n = 10
+输出：1024.00000
+```
+
+示例 2：
+
+```
+输入：x = 2.10000, n = 3
+输出：9.26100
+```
+
+示例 3：
+
+```
+输入：x = 2.00000, n = -2
+输出：0.25000
+解释：2-2 = 1/22 = 1/4 = 0.25
+```
+
+
+提示：
+
+```
+-100.0 < x < 100.0
+-231 <= n <= 231-1
+-104 <= xn <= 104
+```
+
+```java
+class Solution {
+    public double myPow(double x, int n) {
+        long N = n;
+        return N >= 0 ? quickMul(x, N) : 1.0 / quickMul(x, -N);
+    }
+
+    public double quickMul(double x, long N) {
+        if (N == 0) {
+            return 1.0;
+        }
+        double y = quickMul(x, N / 2);
+        return N % 2 == 0 ? y * y : y * y * x;
+    }
+}
+```
+
+#### [剑指 Offer 07. 重建二叉树](https://leetcode.cn/problems/zhong-jian-er-cha-shu-lcof/)
+
+输入某二叉树的前序遍历和中序遍历的结果，请构建该二叉树并返回其根节点。
+
+假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+
+示例 1:
+
+```
+Input: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+Output: [3,9,20,null,null,15,7]
+```
+
+
+示例 2:
+
+```
+Input: preorder = [-1], inorder = [-1]
+Output: [-1]
+```
+
+
+限制：
+
+```
+0 <= 节点个数 <= 5000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    private Map<Integer, Integer> indexMap;
+
+    public TreeNode myBuildTree(int[] preorder, int[] inorder, int preorder_left, int preorder_right, int inorder_left, int inorder_right) {
+        if (preorder_left > preorder_right) {
+            return null;
+        }
+        
+        // 前序遍历中的第一个节点就是根节点
+        int preorder_root = preorder_left;
+        // 在中序遍历中定位根节点
+        int inorder_root = indexMap.get(preorder[preorder_root]);
+        
+        // 先把根节点建立出来
+        TreeNode root = new TreeNode(preorder[preorder_root]);
+        // 得到左子树中的节点数目
+        int size_left_subtree = inorder_root - inorder_left;
+        // 递归地构造左子树，并连接到根节点
+        // 先序遍历中「从 左边界+1 开始的 size_left_subtree」个元素就对应了中序遍历中「从 左边界 开始到 根节点定位-1」的元素
+        root.left = myBuildTree(preorder, inorder, preorder_left + 1, preorder_left + size_left_subtree, inorder_left, inorder_root - 1);
+        // 递归地构造右子树，并连接到根节点
+        // 先序遍历中「从 左边界+1+左子树节点数目 开始到 右边界」的元素就对应了中序遍历中「从 根节点定位+1 到 右边界」的元素
+        root.right = myBuildTree(preorder, inorder, preorder_left + size_left_subtree + 1, preorder_right, inorder_root + 1, inorder_right);
+        return root;
+    }
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        int n = preorder.length;
+        // 构造哈希映射，帮助我们快速定位根节点
+        indexMap = new HashMap<Integer, Integer>();
+        for (int i = 0; i < n; i++) {
+            indexMap.put(inorder[i], i);
+        }
+        return myBuildTree(preorder, inorder, 0, n - 1, 0, n - 1);
+    }
+}
+```
+
+#### [剑指 Offer 68 - II. 二叉树的最近公共祖先](https://leetcode.cn/problems/er-cha-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
+
+给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+
+例如，给定如下二叉树:  root = [3,5,1,6,2,0,8,null,null,7,4]
+
+示例 1:
+
+```
+输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+输出: 3
+解释: 节点 5 和节点 1 的最近公共祖先是节点 3。
+```
+
+示例 2:
+
+```
+输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+输出: 5
+解释: 节点 5 和节点 4 的最近公共祖先是节点 5。因为根据定义最近公共祖先节点可以为节点本身。
+```
+
+
+说明:
+
+```
+所有节点的值都是唯一的。
+p、q 为不同节点且均存在于给定的二叉树中。
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+
+    private TreeNode ans;
+
+    public Solution() {
+        this.ans = null;
+    }
+
+    private boolean dfs(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return false;
+        boolean lson = dfs(root.left, p, q);
+        boolean rson = dfs(root.right, p, q);
+        if ((lson && rson) || ((root.val == p.val || root.val == q.val) && (lson || rson))) {
+            ans = root;
+        } 
+        return lson || rson || (root.val == p.val || root.val == q.val);
+    }
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        this.dfs(root, p, q);
+        return this.ans;
+    }
+}
+```
+
+#### [剑指 Offer 68 - I. 二叉搜索树的最近公共祖先](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
+
+给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。
+
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+
+例如，给定如下二叉搜索树:  root = [6,2,8,0,4,7,9,null,null,3,5]
+
+示例 1:
+
+```
+输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+输出: 6 
+解释: 节点 2 和节点 8 的最近公共祖先是 6。
+```
+
+示例 2:
+
+```
+输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+输出: 2
+解释: 节点 2 和节点 4 的最近公共祖先是 2, 因为根据定义最近公共祖先节点可以为节点本身。
+```
+
+
+说明:
+
+```
+所有节点的值都是唯一的。
+p、q 为不同节点且均存在于给定的二叉搜索树中。
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        List<TreeNode> path_p = getPath(root, p);
+        List<TreeNode> path_q = getPath(root, q);
+        TreeNode ancestor = null;
+        for (int i = 0; i < path_p.size() && i < path_q.size(); ++i) {
+            if (path_p.get(i) == path_q.get(i)) {
+                ancestor = path_p.get(i);
+            } else {
+                break;
+            }
+        }
+        return ancestor;
+    }
+
+    public List<TreeNode> getPath(TreeNode root, TreeNode target) {
+        List<TreeNode> path = new ArrayList<TreeNode>();
+        TreeNode node = root;
+        while (node != target) {
+            path.add(node);
+            if (target.val < node.val) {
+                node = node.left;
+            } else {
+                node = node.right;
+            }
+        }
+        path.add(node);
+        return path;
+    }
+}
+```
+
+#### [剑指 Offer 64. 求1+2+…+n](https://leetcode.cn/problems/qiu-12n-lcof/)
+
+求 1+2+...+n ，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
+
+示例 1：
+
+```
+输入: n = 3
+输出: 6
+```
+
+示例 2：
+
+```
+输入: n = 9
+输出: 45
+```
+
+
+限制：
+
+```
+1 <= n <= 10000
+```
+
+```java
+class Solution {
+    public int sumNums(int n) {
+        return sum(n);
+    }
+
+    public int sum(int i) {
+        if(i == 1) {
+            return 1;
+        } else {
+            return sum(i - 1) + i;
+        }
+    }
+}
+```
+
+#### [剑指 Offer 55 - II. 平衡二叉树](https://leetcode.cn/problems/ping-heng-er-cha-shu-lcof/)
+
+输入一棵二叉树的根节点，判断该树是不是平衡二叉树。如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树。
+
+示例 1:
+
+```
+给定二叉树 [3,9,20,null,null,15,7]
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回 true 。
+```
+
+示例 2:
+
+```
+给定二叉树 [1,2,2,3,3,null,null,4,4]
+       1
+      / \
+     2   2
+    / \
+   3   3
+  / \
+ 4   4
+返回 false 。
+```
+
+限制：
+
+```
+0 <= 树的结点个数 <= 10000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean isBalanced(TreeNode root) {
+        return height(root) >= 0;
+    }
+
+    public int height(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int leftHeight = height(root.left);
+        int rightHeight = height(root.right);
+        if (leftHeight == -1 || rightHeight == -1 || Math.abs(leftHeight - rightHeight) > 1) {
+            return -1;
+        } else {
+            return Math.max(leftHeight, rightHeight) + 1;
+        }
+    }
+}
+```
+
+#### [剑指 Offer 55 - I. 二叉树的深度](https://leetcode.cn/problems/er-cha-shu-de-shen-du-lcof/)
+
+输入一棵二叉树的根节点，求该树的深度。从根节点到叶节点依次经过的节点（含根、叶节点）形成树的一条路径，最长路径的长度为树的深度。
+
+例如：
+
+```
+给定二叉树 [3,9,20,null,null,15,7]，
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回它的最大深度 3 。
+```
+
+提示：
+
+```
+节点总数 <= 10000
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int maxDepth(TreeNode root) {
+        if(root == null) {
+            return 0;
+        } else {
+            int leftHeight = maxDepth(root.left);
+            int rightHeight = maxDepth(root.right);
+            return Math.max(leftHeight, rightHeight) + 1;
+        }
+    }
+}
+```
+
+#### [剑指 Offer 41. 数据流中的中位数](https://leetcode.cn/problems/shu-ju-liu-zhong-de-zhong-wei-shu-lcof/)
+
+如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+
+例如，
+
+[2,3,4] 的中位数是 3
+
+[2,3] 的中位数是 (2 + 3) / 2 = 2.5
+
+设计一个支持以下两种操作的数据结构：
+
+void addNum(int num) - 从数据流中添加一个整数到数据结构中。
+double findMedian() - 返回目前所有元素的中位数。
+示例 1：
+
+```
+输入：
+["MedianFinder","addNum","addNum","findMedian","addNum","findMedian"]
+[[],[1],[2],[],[3],[]]
+输出：[null,null,null,1.50000,null,2.00000]
+```
+
+示例 2：
+
+```
+输入：
+["MedianFinder","addNum","findMedian","addNum","findMedian"]
+[[],[2],[],[3],[]]
+输出：[null,null,2.00000,null,2.50000]
+```
+
+
+限制：
+
+```
+最多会对 addNum、findMedian 进行 50000 次调用。
+```
+
+```java
+class MedianFinder {
+    Queue<Integer> A, B;
+    public MedianFinder() {
+        A = new PriorityQueue<>(); // 小顶堆，保存较大的一半
+        B = new PriorityQueue<>((x, y) -> (y - x)); // 大顶堆，保存较小的一半
+    }
+    public void addNum(int num) {
+        if(A.size() != B.size()) {
+            A.add(num);
+            B.add(A.poll());
+        } else {
+            B.add(num);
+            A.add(B.poll());
+        }
+    }
+    public double findMedian() {
+        return A.size() != B.size() ? A.peek() : (A.peek() + B.peek()) / 2.0;
+    }
+}
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
+```
+
+#### [剑指 Offer 40. 最小的k个数](https://leetcode.cn/problems/zui-xiao-de-kge-shu-lcof/)
+
+输入整数数组 arr ，找出其中最小的 k 个数。例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4。
+
+示例 1：
+
+```
+输入：arr = [3,2,1], k = 2
+输出：[1,2] 或者 [2,1]
+```
+
+示例 2：
+
+```
+输入：arr = [0,1,2,1], k = 1
+输出：[0]
+```
+
+
+限制：
+
+```
+0 <= k <= arr.length <= 10000
+0 <= arr[i] <= 10000
+```
+
+```java
+class Solution {
+    public int[] getLeastNumbers(int[] arr, int k) {
+        Arrays.sort(arr);
+        int[] temp = new int[k];
+        for(int i = 0; i < k; i++) {
+            temp[i] = arr[i];
+        }
+        return temp;
+    }
+}
+```
+
+#### [剑指 Offer 61. 扑克牌中的顺子](https://leetcode.cn/problems/bu-ke-pai-zhong-de-shun-zi-lcof/)
+
+从若干副扑克牌中随机抽 5 张牌，判断是不是一个顺子，即这5张牌是不是连续的。2～10为数字本身，A为1，J为11，Q为12，K为13，而大、小王为 0 ，可以看成任意数字。A 不能视为 14。
+
+示例 1:
+
+```
+输入: [1,2,3,4,5]
+输出: True
+```
+
+
+示例 2:
+
+```
+输入: [0,0,1,2,5]
+输出: True
+```
+
+
+限制：
+
+```
+数组长度为 5 
+数组的数取值为 [0, 13] .
+```
+
+```java
+class Solution {
+    public boolean isStraight(int[] nums) {
+        Set<Integer> repeat = new HashSet<>();
+        int max = 0, min = 14;
+        for(int num : nums) {
+            // 跳过大小王
+            if(num == 0) {
+                continue;
+            }
+            // 最大牌
+            max = Math.max(max, num);
+            // 最小牌
+            min = Math.min(min, num);
+            // 若有重复，直接提前返回false
+            if(repeat.contains(num)) {
+                return false;
+            }
+            repeat.add(num);
+        }
+        // 最大牌 - 最小牌 < 5 则可以构成顺子
+        return max - min < 5;
+    }
+}
+```
+
+#### [剑指 Offer 45. 把数组排成最小的数](https://leetcode.cn/problems/ba-shu-zu-pai-cheng-zui-xiao-de-shu-lcof/)
+
+输入一个非负整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。
+
+示例 1:
+
+```
+输入: [10,2]
+输出: "102"
+```
+
+示例 2:
+
+```
+输入: [3,30,34,5,9]
+输出: "3033459"
+```
+
+
+提示:
+
+```
+0 < nums.length <= 100
+```
+
+说明:
+
+```
+输出结果可能非常大，所以你需要返回一个字符串而不是整数
+拼接起来的数字可能会有前导 0，最后结果不需要去掉前导 0
+```
+
+```java
+class Solution {
+    public String minNumber(int[] nums) {
+        int len = nums.length;
+        String[] strs = new String[len];
+        for(int i = 0; i < len; i++) {
+            strs[i] = String.valueOf(nums[i]);
+        }
+        quickSort(strs, 0, len - 1);
+        StringBuilder res = new StringBuilder();
+        for(String s : strs) {
+            res.append(s);
+        }
+        return res.toString();
+    }
+
+    void quickSort(String[] strs, int l, int r) {
+        if(l >= r) {
+            return;
+        }
+        int i = l, j = r;
+        String tmp = strs[i];
+        while(i < j) {
+            while((strs[j] + strs[l]).compareTo(strs[l] + strs[j]) >= 0 && i < j) {
+                j--;
+            }
+            while((strs[i] + strs[l]).compareTo(strs[l] + strs[i]) <= 0 && i < j) {
+                i++;
+            }
+            tmp = strs[i];
+            strs[i] = strs[j];
+            strs[j] = tmp;
+        }
+        strs[i] = strs[l];
+        strs[l] = tmp;
+        quickSort(strs, l, i - 1);
+        quickSort(strs, i + 1, r);
+    }
+}
+```
+
+#### [剑指 Offer 29. 顺时针打印矩阵](https://leetcode.cn/problems/shun-shi-zhen-da-yin-ju-zhen-lcof/)
+
+输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+
+示例 1：
+
+```
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+输出：[1,2,3,6,9,8,7,4,5]
+```
+
+示例 2：
+
+```
+输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+```
+
+
+限制：
+
+```
+0 <= matrix.length <= 100
+0 <= matrix[i].length <= 100
+```
+
+```java
+class Solution {
+    public int[] spiralOrder(int[][] matrix) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return new int[0];
+        }
+        int rows = matrix.length, columns = matrix[0].length;
+        boolean[][] visited = new boolean[rows][columns];
+        int total = rows * columns;
+        int[] order = new int[total];
+        int row = 0, column = 0;
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        int directionIndex = 0;
+        for (int i = 0; i < total; i++) {
+            order[i] = matrix[row][column];
+            visited[row][column] = true;
+            int nextRow = row + directions[directionIndex][0], nextColumn = column + directions[directionIndex][1];
+            if (nextRow < 0 || nextRow >= rows || nextColumn < 0 || nextColumn >= columns || visited[nextRow][nextColumn]) {
+                directionIndex = (directionIndex + 1) % 4;
+            }
+            row += directions[directionIndex][0];
+            column += directions[directionIndex][1];
+        }
+        return order;
+    }
+}
+```
+
+#### [剑指 Offer 31. 栈的压入、弹出序列](https://leetcode.cn/problems/zhan-de-ya-ru-dan-chu-xu-lie-lcof/)
+
+输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。假设压入栈的所有数字均不相等。例如，序列 {1,2,3,4,5} 是某栈的压栈序列，序列 {4,5,3,2,1} 是该压栈序列对应的一个弹出序列，但 {4,3,5,1,2} 就不可能是该压栈序列的弹出序列。
+
+示例 1：
+
+```
+输入：pushed = [1,2,3,4,5], popped = [4,5,3,2,1]
+输出：true
+解释：我们可以按以下顺序执行：
+push(1), push(2), push(3), push(4), pop() -> 4,
+push(5), pop() -> 5, pop() -> 3, pop() -> 2, pop() -> 1
+```
+
+示例 2：
+
+```
+输入：pushed = [1,2,3,4,5], popped = [4,3,5,1,2]
+输出：false
+解释：1 不能在 2 之前弹出。
+```
+
+
+提示：
+
+```
+0 <= pushed.length == popped.length <= 1000
+0 <= pushed[i], popped[i] < 1000
+pushed 是 popped 的排列。
+```
+
+```java
+class Solution {
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        Stack<Integer> stack = new Stack<>();
+        int i = 0;
+        for(int num : pushed) {
+            // num 入栈
+            stack.push(num); 
+            // 循环判断与出栈
+            while(!stack.isEmpty() && stack.peek() == popped[i]) { 
+                stack.pop();
+                i++;
+            }
+        }
+        return stack.isEmpty();
+    }
+}
+```
+
