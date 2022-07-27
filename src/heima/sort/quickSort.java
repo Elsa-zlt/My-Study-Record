@@ -21,7 +21,7 @@ public class quickSort {
     static int partition(int[] arr, int l, int h) {
         // 最右边的h作为基准点元素
         int pv = arr[h];
-        //
+        // 使用i来记录l的初始值
         int i = l;
         for(int j = l; j < h; j++) {
             if(arr[j] < pv) {
