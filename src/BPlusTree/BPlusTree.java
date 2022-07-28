@@ -7,51 +7,19 @@ package BPlusTree;
  * @param <V> 使用泛型，指定索引类型,并且指定必须继承Comparable
  */
 public class BPlusTree <T, V extends Comparable<V>>{
-    //B+树的阶
+
+    // B+树的阶
     private Integer bTreeOrder;
-    //B+树的非叶子节点最小拥有的子节点数量（同时也是键的最小数量）
-    //private Integer minNUmber;
-    //B+树的非叶子节点最大拥有的节点数量（同时也是键的最大数量）
+
+    // B+树的非叶子节点最小拥有的子节点数量（同时也是键的最小数量）
+    // private Integer minNUmber;
+
+    // B+树的非叶子节点最大拥有的节点数量（同时也是键的最大数量）
     private Integer maxNumber;
 
     private Node<T, V> root;
 
     private LeafNode<T, V> left;
-
-    /**
-     * 节点父类，因为在B+树中，非叶子节点不用存储具体的数据，只需要把索引作为键就可以了
-     * 所以叶子节点和非叶子节点的类不太一样，但是又会公用一些方法，所以用Node类作为父类,
-     * 而且因为要互相调用一些公有方法，所以使用抽象类
-     *
-     * @param <T> 同BPlusTree
-     * @param <V>
-     */
-    abstract class Node<T, V extends Comparable<V>>{
-        //父节点
-        protected Node<T, V> parent;
-        //子节点
-        protected Node<T, V>[] childs;
-        //键（子节点）数量
-        protected Integer number;
-        //键
-        protected Object keys[];
-
-        //构造方法
-        public Node(){
-            this.keys = new Object[maxNumber];
-            this.childs = new Node[maxNumber];
-            this.number = 0;
-            this.parent = null;
-        }
-
-        //查找
-        abstract T find(V key);
-
-        //插入
-        abstract Node<T, V> insert(T value, V key);
-
-        abstract LeafNode<T, V> refreshLeft();
-    }
 
     //无参构造方法，默认阶为3
     public BPlusTree(){
@@ -66,6 +34,45 @@ public class BPlusTree <T, V extends Comparable<V>>{
         this.maxNumber = bTreeOrder + 1;
         this.root = new LeafNode<T, V>();
         this.left = null;
+    }
+
+    /**
+     * 节点父类，因为在B+树中，非叶子节点不用存储具体的数据，只需要把索引作为键就可以了
+     * 所以叶子节点和非叶子节点的类不太一样，但是又会公用一些方法，所以用Node类作为父类,
+     * 而且因为要互相调用一些公有方法，所以使用抽象类
+     *
+     * @param <T> 同BPlusTree
+     * @param <V>
+     */
+    abstract class Node<T, V extends Comparable<V>>{
+
+        // 父节点
+        protected Node<T, V> parent;
+
+        // 子节点
+        protected Node<T, V>[] childs;
+
+        // 键（子节点）数量
+        protected Integer number;
+
+        // 键
+        protected Object keys[];
+
+        // 构造方法
+        public Node() {
+            this.keys = new Object[maxNumber];
+            this.childs = new Node[maxNumber];
+            this.number = 0;
+            this.parent = null;
+        }
+
+        //查找
+        abstract T find(V key);
+
+        //插入
+        abstract Node<T, V> insert(T value, V key);
+
+        abstract LeafNode<T, V> refreshLeft();
     }
 
     //查询
@@ -98,7 +105,6 @@ public class BPlusTree <T, V extends Comparable<V>>{
      * @param <T>
      * @param <V>
      */
-
     class BPlusNode <T, V extends Comparable<V>> extends Node<T, V>{
 
         public BPlusNode() {
