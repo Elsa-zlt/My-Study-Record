@@ -18,17 +18,6 @@ import java.util.List;
  * 节点处理完需要寻找下一个节点，因此需要一个变量保存当前节点curr，处理完后要将当前节点赋值给
  * prev，并将next指针赋值给curr，因此需要一个变量提前保存下一个节点的指针next
  *
- * 1、将下一个节点指针保存到 next 变量 next = curr.next
- * 2、将下一个节点的指针指向 prev，curr.next = prev
- * 3、准备处理下一个节点，将 curr 赋值给 prev
- * 4、将下一个节点赋值为 curr，处理一个节点
- *
- * 解法2：递归：以相似的方法重复，类似于树结构，先从根节点找到叶子节点，从叶子节点开始遍历
- * 大的问题(整个链表反转)拆成性质相同的小问题(两个元素反转)curr.next.next = curr
- * 将所有的小问题解决，大问题即解决
- * 只需每个元素都执行curr.next.next = curr，curr.next = null两个步骤即可
- * 为了保证链不断，必须从最后一个元素开始
- *
  */
 public class ReverseList {
 
@@ -41,6 +30,10 @@ public class ReverseList {
         }
     }
 
+    // 1、将下一个节点指针保存到 next 变量 next = curr.next
+    // 2、将下一个节点的指针指向 prev，curr.next = prev
+    // 3、准备处理下一个节点，将 curr 赋值给 prev
+    // 4、将下一个节点赋值为 curr，处理一个节点
     public static ListNode iterate(ListNode head) {
         ListNode prev = null, curr, next;
         curr = head;
@@ -53,6 +46,11 @@ public class ReverseList {
         return prev;
     }
 
+    // 解法2：递归：以相似的方法重复，类似于树结构，先从根节点找到叶子节点，从叶子节点开始遍历
+    // 大的问题(整个链表反转)拆成性质相同的小问题(两个元素反转)curr.next.next = curr
+    // 将所有的小问题解决，大问题即解决
+    // 只需每个元素都执行curr.next.next = curr，curr.next = null两个步骤即可
+    // 为了保证链不断，必须从最后一个元素开始
     public static ListNode recursion(ListNode head) {
         if (head == null || head.next == null) {
             return head;
