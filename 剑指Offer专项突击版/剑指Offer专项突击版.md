@@ -1,0 +1,314 @@
+#### [剑指 Offer II 001. 整数除法](https://leetcode.cn/problems/xoh6Oh/)
+
+给定两个整数 a 和 b ，求它们的除法的商 a/b ，要求不得使用乘号 '*'、除号 '/' 以及求余符号 '%' 。
+
+注意：
+
+整数除法的结果应当截去（truncate）其小数部分，例如：truncate(8.345) = 8 以及 truncate(-2.7335) = -2
+假设我们的环境只能存储 32 位有符号整数，其数值范围是 [−231, 231−1]。本题中，如果除法结果溢出，则返回 231 − 1
+
+```
+示例 1：
+输入：a = 15, b = 2
+输出：7
+解释：15/2 = truncate(7.5) = 7
+
+示例 2：
+输入：a = 7, b = -3
+输出：-2
+解释：7/-3 = truncate(-2.33333..) = -2
+
+示例 3：
+输入：a = 0, b = 1
+输出：0
+
+示例 4：
+输入：a = 1, b = 1
+输出：1
+
+提示:
+-231 <= a, b <= 231 - 1
+b != 0
+```
+
+代码：
+
+```java
+class Solution {
+    
+    // 时间复杂度：O(logn * logn)，n 是最大值 2147483647 --> 10^10
+	public int divide(int a, int b) {
+    	if (a == Integer.MIN_VALUE && b == -1)
+        	return Integer.MAX_VALUE;
+    	int sign = (a > 0) ^ (b > 0) ? -1 : 1;
+    	if (a > 0) a = -a;
+    	if (b > 0) b = -b;
+    	int res = 0;
+    	while (a <= b) {
+        	int value = b;
+        	int k = 1;
+        	// 0xc0000000 是十进制 -2^30 的十六进制的表示
+        	// 判断 value >= 0xc0000000 的原因：保证 value + value 不会溢出
+        	// 可以这样判断的原因是：0xc0000000 是最小值 -2^31 的一半，
+        	// 而 a 的值不可能比 -2^31 还要小，所以 value 不可能比 0xc0000000 小
+        	// -2^31 / 2 = -2^30
+        	while (value >= 0xc0000000 && a <= value + value) {
+            	value += value;
+            	// 代码优化：如果 k 已经大于最大值的一半的话，那么直接返回最小值
+            	// 因为这个时候 k += k 的话肯定会大于等于 2147483648 ，这个超过了题目给的范围
+            	if (k > Integer.MAX_VALUE / 2) {
+                	return Integer.MIN_VALUE;
+            	}
+            	k += k;
+        	}
+        	a -= value;
+        	res += k;
+    	}
+    	// bug 修复：因为不能使用乘号，所以将乘号换成三目运算符
+    	return sign == 1 ? res : -res;
+	}
+}
+```
+
+#### [剑指 Offer II 002. 二进制加法](https://leetcode.cn/problems/JFETK5/)
+
+给定两个 01 字符串 a 和 b ，请计算它们的和，并以二进制字符串的形式输出。
+
+输入为 非空 字符串且只包含数字 1 和 0。
+
+```
+示例 1:
+输入: a = "11", b = "10"
+输出: "101"
+
+示例 2:
+输入: a = "1010", b = "1011"
+输出: "10101"
+
+提示：
+每个字符串仅由字符 '0' 或 '1' 组成。
+1 <= a.length, b.length <= 10^4
+字符串如果不是 "0" ，就都不含前导零。
+```
+
+代码：
+
+```java
+class Solution {
+    public String addBinary(String a, String b) {
+        StringBuffer ans = new StringBuffer();
+
+        int n = Math.max(a.length(), b.length()), carry = 0;
+        for(int i = 0; i < n; i++) {
+            carry += i < a.length() ? (a.charAt(a.length() - 1 - i) - '0') : 0;
+            carry += i < b.length() ? (b.charAt(b.length() - 1 - i) - '0') : 0;
+            ans.append((char)(carry % 2 + '0'));
+            carry /= 2;
+        }
+        if(carry > 0) {
+            ans.append('1');
+        }
+        ans.reverse();
+        return ans.toString();
+    }
+}
+```
+
+#### [剑指 Offer II 003. 前 n 个数字二进制中 1 的个数](https://leetcode.cn/problems/w3tCBm/)
+
+给定一个非负整数 n ，请计算 0 到 n 之间的每个数字的二进制表示中 1 的个数，并输出一个数组。
+
+```
+示例 1:
+输入: n = 2
+输出: [0,1,1]
+解释: 
+0 --> 0
+1 --> 1
+2 --> 10
+
+示例 2:
+输入: n = 5
+输出: [0,1,1,2,1,2]
+解释:
+0 --> 0
+1 --> 1
+2 --> 10
+3 --> 11
+4 --> 100
+5 --> 101
+
+说明 :
+0 <= n <= 105
+```
+
+代码：
+
+```java
+class Solution {
+    public int[] countBits(int n) {
+        int[] bits = new int[n + 1];
+        for(int i = 0; i <= n; i++) {
+            bits[i] = countOnes(i);
+        }
+        return bits;
+    }
+
+    public int countOnes(int x) {
+        int ones = 0;
+        while(x > 0) {
+            x &= (x - 1);
+            ones++;
+        }
+        return ones;
+    }
+}
+```
+
+#### [剑指 Offer II 004. 只出现一次的数字 ](https://leetcode.cn/problems/WGki4K/)
+
+给你一个整数数组 nums ，除某个元素仅出现 一次 外，其余每个元素都恰出现 三次 。请你找出并返回那个只出现了一次的元素。
+
+```
+示例 1：
+输入：nums = [2,2,3,2]
+输出：3
+
+示例 2：
+输入：nums = [0,1,0,1,0,1,100]
+输出：100
+
+提示：
+1 <= nums.length <= 3 * 104
+-231 <= nums[i] <= 231 - 1
+nums 中，除某个元素仅出现 一次 外，其余每个元素都恰出现 三次
+```
+
+代码：
+
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        Map<Integer, Integer> freq = new HashMap<Integer, Integer>();
+        for(int num : nums) {
+            freq.put(num, freq.getOrDefault(num, 0) + 1);
+        }
+        int ans = 0;
+        for(Map.Entry<Integer, Integer> entry : freq.entrySet()) {
+            int num = entry.getKey(), occ = entry.getValue();
+            if(occ == 1) {
+                ans = num;
+                break;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 005. 单词长度的最大乘积](https://leetcode.cn/problems/aseY1I/)
+
+给定一个字符串数组 words，请计算当两个字符串 words[i] 和 words[j] 不包含相同字符时，它们长度的乘积的最大值。假设字符串中只包含英语的小写字母。如果没有不包含相同字符的一对字符串，返回 0。
+
+```
+示例 1:
+输入: words = ["abcw","baz","foo","bar","fxyz","abcdef"]
+输出: 16 
+解释: 这两个单词为 "abcw", "fxyz"。它们不包含相同字符，且长度的乘积最大。
+
+示例 2:
+输入: words = ["a","ab","abc","d","cd","bcd","abcd"]
+输出: 4 
+解释: 这两个单词为 "ab", "cd"。
+
+示例 3:
+输入: words = ["a","aa","aaa","aaaa"]
+输出: 0 
+解释: 不存在这样的两个单词。
+
+提示：
+2 <= words.length <= 1000
+1 <= words[i].length <= 1000
+words[i] 仅包含小写字母
+```
+
+代码：
+
+```java
+class Solution {
+    public int maxProduct(String[] words) {
+        int length = words.length;
+        int[] masks = new int[length];
+        for(int i = 0; i < length; i++) {
+            String word = words[i];
+            int wordLength = word.length();
+            for(int j = 0; j < wordLength; j++) {
+                masks[i] |= 1 << (word.charAt(j) - 'a');
+            }
+        }
+        int maxProd = 0;
+        for(int i = 0; i < length; i++) {
+            for(int j = i + 1; j < length; j++) {
+                if((masks[i] & masks[j]) == 0) {
+                    maxProd = Math.max(maxProd, words[i].length() * words[j].length());
+                }
+            }
+        }
+        return maxProd;
+    }
+}
+```
+
+#### [剑指 Offer II 006. 排序数组中两个数字之和](https://leetcode.cn/problems/kLl5u1/)
+
+给定一个已按照 升序排列  的整数数组 numbers ，请你从数组中找出两个数满足相加之和等于目标数 target 。
+
+函数应该以长度为 2 的整数数组的形式返回这两个数的下标值。numbers 的下标 从 0 开始计数 ，所以答案数组应当满足 0 <= answer[0] < answer[1] < numbers.length 。
+
+假设数组中存在且只存在一对符合条件的数字，同时一个数字不能使用两次。
+
+```
+示例 1：
+输入：numbers = [1,2,4,6,10], target = 8
+输出：[1,3]
+解释：2 与 6 之和等于目标数 8 。因此 index1 = 1, index2 = 3 。
+
+示例 2：
+输入：numbers = [2,3,4], target = 6
+输出：[0,2]
+
+示例 3：
+输入：numbers = [-1,0], target = -1
+输出：[0,1]
+
+提示：
+2 <= numbers.length <= 3 * 104
+-1000 <= numbers[i] <= 1000
+numbers 按 递增顺序 排列
+-1000 <= target <= 1000
+仅存在一个有效答案
+```
+
+代码：
+
+```java
+class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        for(int i = 0; i < numbers.length; i++) {
+            int low = i + 1, high = numbers.length - 1;
+            while(low <= high) {
+                int mid = (high- low) / 2 + low;
+                if(numbers[mid] == target - numbers[i]) {
+                    return new int[]{i, mid};
+                } else if(numbers[mid] > target - numbers[i]) {
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            }
+        }
+        return new int[]{-1, -1};
+    }
+}
+```
+
