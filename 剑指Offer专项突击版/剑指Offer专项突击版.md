@@ -312,3 +312,185 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer II 007. 数组中和为 0 的三个数](https://leetcode.cn/problems/1fGaJU/)
+
+给你一个整数数组 nums ，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k ，同时还满足 nums[i] + nums[j] + nums[k] == 0 。请
+
+你返回所有和为 0 且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+```
+示例 1：
+输入：nums = [-1,0,1,2,-1,-4]
+输出：[[-1,-1,2],[-1,0,1]]
+
+解释：
+nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0 。
+nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0 。
+nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0 。
+不同的三元组是 [-1,0,1] 和 [-1,-1,2] 。
+注意，输出的顺序和三元组的顺序并不重要。
+
+示例 2：
+输入：nums = [0,1,1]
+输出：[]
+解释：唯一可能的三元组和不为 0 。
+
+示例 3：
+输入：nums = [0,0,0]
+输出：[[0,0,0]]
+解释：唯一可能的三元组和为 0 。
+
+提示：
+3 <= nums.length <= 3000
+-105 <= nums[i] <= 105
+```
+
+代码：
+
+```java
+class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        int n = nums.length;
+        Arrays.sort(nums);
+        List<List<Integer>> ans = new ArrayList<List<Integer>>();
+        for(int first = 0; first < n; first++) {
+            if(first > 0 && nums[first] == nums[first - 1]) {
+                continue;
+            }
+            int third = n - 1;
+            int target = -nums[first];
+            for(int second = first + 1; second < n; second++) {
+                if(second > first + 1 && nums[second] == nums[second - 1]) {
+                    continue;
+                }
+                while(second < third && nums[second] + nums[third] > target) {
+                    --third;
+                }
+                if(second == third) {
+                    break;
+                }
+                if(nums[second] + nums[third] == target) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    list.add(nums[first]);
+                    list.add(nums[second]);
+                    list.add(nums[third]);
+                    ans.add(list);
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 008. 和大于等于 target 的最短子数组](https://leetcode.cn/problems/2VG8Kg/)
+
+给定一个含有 n 个正整数的数组和一个正整数 target 。
+
+找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。
+
+```
+示例 1：
+输入：target = 7, nums = [2,3,1,2,4,3]
+输出：2
+解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+
+示例 2：
+输入：target = 4, nums = [1,4,4]
+输出：1
+
+示例 3：
+输入：target = 11, nums = [1,1,1,1,1,1,1,1]
+输出：0
+
+提示：
+1 <= target <= 109
+1 <= nums.length <= 105
+1 <= nums[i] <= 105
+```
+
+代码：
+
+```java
+class Solution {
+    public int minSubArrayLen(int target, int[] nums) {
+        int n = nums.length;
+        if(n == 0) {
+            return 0;
+        }
+        int ans = Integer.MAX_VALUE;
+        int start = 0, end = 0;
+        int sum = 0;
+        while(end < n) {
+            sum += nums[end];
+            while(sum >= target) {
+                ans = Math.min(ans, end - start + 1);
+                sum -= nums[start];
+                start++;
+            }
+            end++;
+        }
+        return ans == Integer.MAX_VALUE ? 0 : ans;
+    }
+}
+```
+
+#### [剑指 Offer II 009. 乘积小于 K 的子数组](https://leetcode.cn/problems/ZVAVXX/)
+
+给定一个正整数数组 nums和整数 k ，请找出该数组内乘积小于 k 的连续的子数组的个数。
+
+```
+示例 1:
+输入: nums = [10,5,2,6], k = 100
+输出: 8
+解释: 8 个乘积小于 100 的子数组分别为: [10], [5], [2], [6], [10,5], [5,2], [2,6], [5,2,6]。
+需要注意的是 [10,5,2] 并不是乘积小于100的子数组。
+
+示例 2:
+输入: nums = [1,2,3], k = 0
+输出: 0
+
+提示: 
+1 <= nums.length <= 3 * 104
+1 <= nums[i] <= 1000
+0 <= k <= 106
+```
+
+代码：
+
+```java
+class Solution {
+    public int numSubarrayProductLessThanK(int[] nums, int k) {
+        if (k == 0) {
+            return 0;
+        }
+        int n = nums.length;
+        double[] logPrefix = new double[n + 1];
+        for (int i = 0; i < n; i++) {
+            logPrefix[i + 1] = logPrefix[i] + Math.log(nums[i]);
+        }
+        double logk = Math.log(k);
+        int ret = 0;
+        for (int j = 0; j < n; j++) {
+            int l = 0;
+            int r = j + 1;
+            int idx = j + 1;
+            double val = logPrefix[j + 1] - logk + 1e-10;
+            while (l <= r) {
+                int mid = (l + r) / 2;
+                if (logPrefix[mid] > val) {
+                    idx = mid;
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            }
+            ret += j + 1 - idx;
+        }
+        return ret;
+    }
+}
+```
+
