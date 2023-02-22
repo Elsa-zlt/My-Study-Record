@@ -494,3 +494,217 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer II 010. 和为 k 的子数组](https://leetcode.cn/problems/QTMn0o/)
+
+给定一个整数数组和一个整数 k ，请找到该数组中和为 k 的连续子数组的个数。
+
+```
+示例 1：
+输入:nums = [1,1,1], k = 2
+输出: 2
+解释: 此题 [1,1] 与 [1,1] 为两种不同的情况
+
+示例 2：
+输入:nums = [1,2,3], k = 3
+输出: 2
+
+提示:
+1 <= nums.length <= 2 * 104
+-1000 <= nums[i] <= 1000
+-107 <= k <= 107
+```
+
+代码：
+
+```java
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        int count = 0, pre = 0;
+        HashMap<Integer, Integer> mp = new HashMap<>();
+        mp.put(0, 1);
+        for(int i = 0; i < nums.length; i++) {
+            pre += nums[i];
+            if(mp.containsKey(pre - k)) {
+                count += mp.get(pre - k);
+            }
+            mp.put(pre, mp.getOrDefault(pre, 0) + 1);
+        }
+        return count;
+    }
+}
+```
+
+#### [剑指 Offer II 011. 0 和 1 个数相同的子数组](https://leetcode.cn/problems/A1NYOS/)
+
+给定一个二进制数组 nums , 找到含有相同数量的 0 和 1 的最长连续子数组，并返回该子数组的长度。
+
+```
+示例 1：
+输入: nums = [0,1]
+输出: 2
+说明: [0, 1] 是具有相同数量 0 和 1 的最长连续子数组。
+
+示例 2：
+输入: nums = [0,1,0]
+输出: 2
+说明: [0, 1] (或 [1, 0]) 是具有相同数量 0 和 1 的最长连续子数组。
+
+提示：
+1 <= nums.length <= 105
+nums[i] 不是 0 就是 1
+```
+
+代码：
+
+```java
+class Solution {
+    public int findMaxLength(int[] nums) {
+        int maxLength = 0;
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int counter = 0;
+        map.put(counter, -1);
+        int n = nums.length;
+        for(int i = 0; i < n; i++) {
+            int num = nums[i];
+            if(num == 1) {
+                counter++;
+            } else {
+                counter--;
+            }
+            if(map.containsKey(counter)) {
+                int prevIndex = map.get(counter);
+                maxLength = Math.max(maxLength, i - prevIndex);
+            } else {
+                map.put(counter, i);
+            }
+        }
+        return maxLength;
+    }
+}
+```
+
+#### [剑指 Offer II 012. 左右两边子数组的和相等](https://leetcode.cn/problems/tvdfij/)
+
+给你一个整数数组 nums ，请计算数组的 中心下标 。
+
+数组 中心下标 是数组的一个下标，其左侧所有元素相加的和等于右侧所有元素相加的和。
+
+如果中心下标位于数组最左端，那么左侧数之和视为 0 ，因为在下标的左侧不存在元素。这一点对于中心下标位于数组最右端同样适用。
+
+如果数组有多个中心下标，应该返回 最靠近左边 的那一个。如果数组不存在中心下标，返回 -1 。
+
+```
+示例 1：
+输入：nums = [1,7,3,6,5,6]
+输出：3
+解释：
+中心下标是 3 。
+左侧数之和 sum = nums[0] + nums[1] + nums[2] = 1 + 7 + 3 = 11 ，
+右侧数之和 sum = nums[4] + nums[5] = 5 + 6 = 11 ，二者相等。
+
+示例 2：
+输入：nums = [1, 2, 3]
+输出：-1
+解释：
+数组中不存在满足此条件的中心下标。
+
+示例 3：
+输入：nums = [2, 1, -1]
+输出：0
+解释：
+中心下标是 0 。
+左侧数之和 sum = 0 ，（下标 0 左侧不存在元素），
+右侧数之和 sum = nums[1] + nums[2] = 1 + -1 = 0 。
+
+提示：
+1 <= nums.length <= 104
+-1000 <= nums[i] <= 1000
+```
+
+代码：
+
+```java
+class Solution {
+    public int pivotIndex(int[] nums) {
+        int total = Arrays.stream(nums).sum();
+        int sum = 0;
+        for(int i = 0; i < nums.length; i++) {
+            if(2 * sum + nums[i] == total) {
+                return i;
+            }
+            sum += nums[i];
+        }
+        return -1;
+    }
+}
+```
+
+#### [剑指 Offer II 013. 二维子矩阵的和](https://leetcode.cn/problems/O4NDxx/)
+
+给定一个二维矩阵 matrix，以下类型的多个请求：
+
+计算其子矩形范围内元素的总和，该子矩阵的左上角为 (row1, col1) ，右下角为 (row2, col2) 。
+实现 NumMatrix 类：
+
+NumMatrix(int[][] matrix) 给定整数矩阵 matrix 进行初始化
+int sumRegion(int row1, int col1, int row2, int col2) 返回左上角 (row1, col1) 、右下角 (row2, col2) 的子矩阵的元素总和。
+
+```
+示例 1：
+输入: 
+["NumMatrix","sumRegion","sumRegion","sumRegion"]
+[[[[3,0,1,4,2],[5,6,3,2,1],[1,2,0,1,5],[4,1,0,1,7],[1,0,3,0,5]]],[2,1,4,3],[1,1,2,2],[1,2,2,4]]
+输出: 
+[null, 8, 11, 12]
+解释:
+NumMatrix numMatrix = new NumMatrix([[3,0,1,4,2],[5,6,3,2,1],[1,2,0,1,5],[4,1,0,1,7],[1,0,3,0,5]]]);
+numMatrix.sumRegion(2, 1, 4, 3); // return 8 (红色矩形框的元素总和)
+numMatrix.sumRegion(1, 1, 2, 2); // return 11 (绿色矩形框的元素总和)
+numMatrix.sumRegion(1, 2, 2, 4); // return 12 (蓝色矩形框的元素总和)
+
+提示：
+m == matrix.length
+n == matrix[i].length
+1 <= m, n <= 200
+-105 <= matrix[i][j] <= 105
+0 <= row1 <= row2 < m
+0 <= col1 <= col2 < n
+最多调用 104 次 sumRegion 方法
+```
+
+代码：
+
+```java
+class NumMatrix {
+
+    int[][] sums;
+
+    public NumMatrix(int[][] matrix) {
+        int m = matrix.length;
+        if(m > 0) {
+            int n = matrix[0].length;
+            sums = new int[m][n + 1];
+            for(int i = 0; i < m; i++) {
+                for(int j = 0; j < n; j++) {
+                    sums[i][j + 1] = sums[i][j] + matrix[i][j];
+                }
+            }
+        }
+    }
+    
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        int sum = 0;
+        for(int i = row1; i <= row2; i++) {
+            sum += sums[i][col2 + 1] - sums[i][col1];
+        }
+        return sum;
+    }
+}
+
+/**
+ * Your NumMatrix object will be instantiated and called as such:
+ * NumMatrix obj = new NumMatrix(matrix);
+ * int param_1 = obj.sumRegion(row1,col1,row2,col2);
+ */
+```
+
