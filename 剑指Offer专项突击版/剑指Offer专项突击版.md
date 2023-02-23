@@ -708,3 +708,170 @@ class NumMatrix {
  */
 ```
 
+#### [剑指 Offer II 014. 字符串中的变位词](https://leetcode.cn/problems/MPnaiL/)
+
+给定两个字符串 s1 和 s2，写一个函数来判断 s2 是否包含 s1 的某个变位词。
+
+换句话说，第一个字符串的排列之一是第二个字符串的 子串 。
+
+```
+示例 1：
+输入: s1 = "ab" s2 = "eidbaooo"
+输出: True
+解释: s2 包含 s1 的排列之一 ("ba").
+
+示例 2：
+输入: s1= "ab" s2 = "eidboaoo"
+输出: False
+
+提示：
+1 <= s1.length, s2.length <= 104
+s1 和 s2 仅包含小写字母
+```
+
+代码：
+
+```java
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        int n = s1.length(), m = s2.length();
+        if(n > m) {
+            return false;
+        }
+        int[] cnt1 = new int[26];
+        int[] cnt2 = new int[26];
+        for(int i = 0; i < n; i++) {
+            ++cnt1[s1.charAt(i) - 'a'];
+            ++cnt2[s2.charAt(i) - 'a'];
+        }
+        if(Arrays.equals(cnt1, cnt2)) {
+            return true;
+        }
+        for(int i = n; i < m; i++) {
+            ++cnt2[s2.charAt(i) - 'a'];
+            --cnt2[s2.charAt(i - n) - 'a'];
+            if(Arrays.equals(cnt1, cnt2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+
+#### [剑指 Offer II 015. 字符串中的所有变位词](https://leetcode.cn/problems/VabMRr/)
+
+给定两个字符串 s 和 p，找到 s 中所有 p 的 变位词 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
+
+变位词 指字母相同，但排列不同的字符串。
+
+```
+示例 1：
+输入: s = "cbaebabacd", p = "abc"
+输出: [0,6]
+解释:
+起始索引等于 0 的子串是 "cba", 它是 "abc" 的变位词。
+起始索引等于 6 的子串是 "bac", 它是 "abc" 的变位词。
+
+示例 2：
+输入: s = "abab", p = "ab"
+输出: [0,1,2]
+解释:
+起始索引等于 0 的子串是 "ab", 它是 "ab" 的变位词。
+起始索引等于 1 的子串是 "ba", 它是 "ab" 的变位词。
+起始索引等于 2 的子串是 "ab", 它是 "ab" 的变位词。
+
+提示:
+1 <= s.length, p.length <= 3 * 104
+s 和 p 仅包含小写字母
+```
+
+代码：
+
+```java
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        int sLen = s.length(), pLen = p.length();
+        if(sLen < pLen) {
+            return new ArrayList<Integer>();
+        }
+
+        List<Integer> ans = new ArrayList<Integer>();
+        int[] sCount = new int[26];
+        int[] pCount = new int[26];
+        for(int i = 0; i < pLen; i++) {
+            ++sCount[s.charAt(i) - 'a'];
+            ++pCount[p.charAt(i) - 'a'];
+        }
+        if(Arrays.equals(sCount, pCount)) {
+            ans.add(0);
+        }
+        for(int i = 0; i < sLen - pLen; i++) {
+            --sCount[s.charAt(i) - 'a'];
+            ++sCount[s.charAt(i + pLen) - 'a'];
+            if(Arrays.equals(sCount, pCount)) {
+                ans.add(i + 1);
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 016. 不含重复字符的最长子字符串](https://leetcode.cn/problems/wtcaE1/)
+
+给定一个字符串 s ，请你找出其中不含有重复字符的 最长连续子字符串 的长度。
+
+```
+示例 1:
+输入: s = "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子字符串是 "abc"，所以其长度为 3。
+
+示例 2:
+输入: s = "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子字符串是 "b"，所以其长度为 1。
+
+示例 3:
+输入: s = "pwwkew"
+输出: 3
+解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+     请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+     
+示例 4:
+输入: s = ""
+输出: 0
+
+提示：
+0 <= s.length <= 5 * 104
+s 由英文字母、数字、符号和空格组成
+```
+
+代码：
+
+```java
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        // 哈希集合，记录每个字符是否出现过
+        Set<Character> occ = new HashSet<Character>();
+        int n = s.length();
+        // 右指针，初始值为-1，相当于我们在字符串的左侧，还没有开始移动
+        int rk = -1, ans = 0;
+        for(int i = 0; i < n; i++) {
+            if(i != 0) {
+                // 左指针向右移动一格，移除一个字符
+                occ.remove(s.charAt(i - 1));
+            }
+            while(rk + 1 < n && !occ.contains(s.charAt(rk + 1))) {
+                // 不断地移动右指针
+                occ.add(s.charAt(rk + 1));
+                ++rk;
+            }
+            ans = Math.max(ans, rk - i + 1);
+        }
+        return ans;
+    }
+}
+```
+
