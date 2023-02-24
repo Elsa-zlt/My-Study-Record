@@ -875,3 +875,217 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer II 017. 含有所有字符的最短字符串](https://leetcode.cn/problems/M1oyTv/)
+
+给定两个字符串 s 和 t 。返回 s 中包含 t 的所有字符的最短子字符串。如果 s 中不存在符合条件的子字符串，则返回空字符串 "" 。
+
+如果 s 中存在多个符合条件的子字符串，返回任意一个。
+
+注意： 对于 t 中重复字符，我们寻找的子字符串中该字符数量必须不少于 t 中该字符数量。
+
+```
+示例 1：
+输入：s = "ADOBECODEBANC", t = "ABC"
+输出："BANC" 
+解释：最短子字符串 "BANC" 包含了字符串 t 的所有字符 'A'、'B'、'C'
+
+示例 2：
+输入：s = "a", t = "a"
+输出："a"
+
+示例 3：
+输入：s = "a", t = "aa"
+输出：""
+解释：t 中两个字符 'a' 均应包含在 s 的子串中，因此没有符合条件的子字符串，返回空字符串。
+
+提示：
+1 <= s.length, t.length <= 105
+s 和 t 由英文字母组成
+```
+
+代码：
+
+```java
+class Solution {
+    Map<Character, Integer> ori = new HashMap<Character, Integer>();
+    Map<Character, Integer> cnt = new HashMap<Character, Integer>();
+
+    public String minWindow(String s, String t) {
+        int tLen = t.length();
+        for (int i = 0; i < tLen; i++) {
+            char c = t.charAt(i);
+            ori.put(c, ori.getOrDefault(c, 0) + 1);
+        }
+        int l = 0, r = -1;
+        int len = Integer.MAX_VALUE, ansL = -1, ansR = -1;
+        int sLen = s.length();
+        while (r < sLen) {
+            ++r;
+            if (r < sLen && ori.containsKey(s.charAt(r))) {
+                cnt.put(s.charAt(r), cnt.getOrDefault(s.charAt(r), 0) + 1);
+            }
+            while (check() && l <= r) {
+                if (r - l + 1 < len) {
+                    len = r - l + 1;
+                    ansL = l;
+                    ansR = l + len;
+                }
+                if (ori.containsKey(s.charAt(l))) {
+                    cnt.put(s.charAt(l), cnt.getOrDefault(s.charAt(l), 0) - 1);
+                }
+                ++l;
+            }
+        }
+        return ansL == -1 ? "" : s.substring(ansL, ansR);
+    }
+
+    public boolean check() {
+        Iterator iter = ori.entrySet().iterator(); 
+        while (iter.hasNext()) { 
+            Map.Entry entry = (Map.Entry) iter.next(); 
+            Character key = (Character) entry.getKey(); 
+            Integer val = (Integer) entry.getValue(); 
+            if (cnt.getOrDefault(key, 0) < val) {
+                return false;
+            }
+        } 
+        return true;
+    }
+}
+```
+
+#### [剑指 Offer II 018. 有效的回文](https://leetcode.cn/problems/XltzEq/)
+
+给定一个字符串 s ，验证 s 是否是 回文串 ，只考虑字母和数字字符，可以忽略字母的大小写。
+
+本题中，将空字符串定义为有效的 回文串 。
+
+```
+示例 1:
+输入: s = "A man, a plan, a canal: Panama"
+输出: true
+解释："amanaplanacanalpanama" 是回文串
+
+示例 2:
+输入: s = "race a car"
+输出: false
+解释："raceacar" 不是回文串
+
+提示：
+1 <= s.length <= 2 * 105
+字符串 s 由 ASCII 字符组成
+```
+
+代码：
+
+```java
+class Solution {
+    public boolean isPalindrome(String s) {
+        StringBuffer sgood = new StringBuffer();
+        int length = s.length();
+        for (int i = 0; i < length; i++) {
+            char ch = s.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                sgood.append(Character.toLowerCase(ch));
+            }
+        }
+        StringBuffer sgood_rev = new StringBuffer(sgood).reverse();
+        return sgood.toString().equals(sgood_rev.toString());
+    }
+}
+```
+
+#### [剑指 Offer II 019. 最多删除一个字符得到回文](https://leetcode.cn/problems/RQku0D/)
+
+给定一个非空字符串 s，请判断如果 最多 从字符串中删除一个字符能否得到一个回文字符串。
+
+```
+示例 1:
+输入: s = "aba"
+输出: true
+
+示例 2:
+输入: s = "abca"
+输出: true
+解释: 可以删除 "c" 字符 或者 "b" 字符
+
+示例 3:
+输入: s = "abc"
+输出: false
+
+提示:
+1 <= s.length <= 105
+s 由小写英文字母组成
+```
+
+代码：
+
+```java
+class Solution {
+    public boolean validPalindrome(String s) {
+        int low = 0, high = s.length() - 1;
+        while (low < high) {
+            char c1 = s.charAt(low), c2 = s.charAt(high);
+            if (c1 == c2) {
+                ++low;
+                --high;
+            } else {
+                return validPalindrome(s, low, high - 1) || validPalindrome(s, low + 1, high);
+            }
+        }
+        return true;
+    }
+
+    public boolean validPalindrome(String s, int low, int high) {
+        for (int i = low, j = high; i < j; ++i, --j) {
+            char c1 = s.charAt(i), c2 = s.charAt(j);
+            if (c1 != c2) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+#### [剑指 Offer II 020. 回文子字符串的个数](https://leetcode.cn/problems/a7VOhD/)
+
+给定一个字符串 s ，请计算这个字符串中有多少个回文子字符串。
+
+具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。
+
+```
+示例 1：
+输入：s = "abc"
+输出：3
+解释：三个回文子串: "a", "b", "c"
+
+示例 2：
+输入：s = "aaa"
+输出：6
+解释：6个回文子串: "a", "a", "a", "aa", "aa", "aaa"
+
+提示：
+1 <= s.length <= 1000
+s 由小写英文字母组成
+```
+
+代码：
+
+```java
+class Solution {
+    public int countSubstrings(String s) {
+        int n = s.length(), ans = 0;
+        for(int i = 0 ; i < 2 * n - 1; i++) {
+            int l = i / 2, r = i / 2 + i % 2;
+            while(l >= 0 && r < n && s.charAt(l) == s.charAt(r)) {
+                --l;
+                ++r;
+                ++ans;
+            }
+        }
+        return ans;
+    }
+}
+```
+
