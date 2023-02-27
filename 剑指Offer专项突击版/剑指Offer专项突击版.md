@@ -1467,5 +1467,226 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer II 027. 回文链表](https://leetcode.cn/problems/aMhZSa/)
 
+给定一个链表的 头节点 head ，请判断其是否为回文链表。
+
+如果一个链表是回文，那么链表节点序列从前往后看和从后往前看是相同的。
+
+```
+示例 1：
+输入: head = [1,2,3,3,2,1]
+输出: true
+示例 2：
+输入: head = [1,2]
+输出: false
+
+提示：
+链表 L 的长度范围为 [1, 105]
+0 <= node.val <= 9
+```
+
+代码：
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        List<Integer> vals = new ArrayList<Integer>();
+
+        // 将链表的值复制到数组中
+        ListNode currentNode = head;
+        while (currentNode != null) {
+            vals.add(currentNode.val);
+            currentNode = currentNode.next;
+        }
+
+        // 使用双指针判断是否回文
+        int front = 0;
+        int back = vals.size() - 1;
+        while (front < back) {
+            if (!vals.get(front).equals(vals.get(back))) {
+                return false;
+            }
+            front++;
+            back--;
+        }
+        return true;
+    }
+}
+```
+
+#### [剑指 Offer II 028. 展平多级双向链表](https://leetcode.cn/problems/Qv1Da2/)
+
+多级双向链表中，除了指向下一个节点和前一个节点指针之外，它还有一个子链表指针，可能指向单独的双向链表。这些子列表也可能会有一个或多个自己的子项，依此类推，生成多级数据结构，如下面的示例所示。
+
+给定位于列表第一级的头节点，请扁平化列表，即将这样的多级双向链表展平成普通的双向链表，使所有结点出现在单级双链表中。
+
+```
+示例 1：
+输入：head = [1,2,3,4,5,6,null,null,null,7,8,9,10,null,null,11,12]
+输出：[1,2,3,7,8,11,12,9,10,4,5,6]
+解释：
+输入的多级列表如下图所示：
+
+示例 2：
+输入：head = [1,2,null,3]
+输出：[1,3,2]
+解释：
+输入的多级列表如下图所示：
+  1---2---NULL
+  |
+  3---NULL
+示例 3：
+输入：head = []
+输出：[]
+```
+
+代码：
+
+```java
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node prev;
+    public Node next;
+    public Node child;
+};
+*/
+
+class Solution {
+    public Node flatten(Node head) {
+        dfs(head);
+        return head;
+    }
+
+    public Node dfs(Node node) {
+        Node cur = node;
+        // 记录链表的最后一个节点
+        Node last = null;
+
+        while (cur != null) {
+            Node next = cur.next;
+            //  如果有子节点，那么首先处理子节点
+            if (cur.child != null) {
+                Node childLast = dfs(cur.child);
+
+                next = cur.next;
+                //  将 node 与 child 相连
+                cur.next = cur.child;
+                cur.child.prev = cur;
+
+                //  如果 next 不为空，就将 last 与 next 相连
+                if (next != null) {
+                    childLast.next = next;
+                    next.prev = childLast;
+                }
+
+                // 将 child 置为空
+                cur.child = null;
+                last = childLast;
+            } else {
+                last = cur;
+            }
+            cur = next;
+        }
+        return last;
+    }
+}
+```
+
+#### [剑指 Offer II 029. 排序的循环链表](https://leetcode.cn/problems/4ueAj6/)
+
+给定循环单调非递减列表中的一个点，写一个函数向这个列表中插入一个新元素 insertVal ，使这个列表仍然是循环升序的。
+
+给定的可以是这个列表中任意一个顶点的指针，并不一定是这个列表中最小元素的指针。
+
+如果有多个满足条件的插入位置，可以选择任意一个位置插入新的值，插入后整个列表仍然保持有序。
+
+如果列表为空（给定的节点是 null），需要创建一个循环有序列表并返回这个节点。否则。请返回原先给定的节点。
+
+```
+示例 1：
+输入：head = [3,4,1], insertVal = 2
+输出：[3,4,1,2]
+解释：在上图中，有一个包含三个元素的循环有序列表，你获得值为 3 的节点的指针，我们需要向表中插入元素 2 。新插入的节点应该在 1 和 3 之间，插入之后，整个列表如上图所示，最后返回节点 3 。
+
+示例 2：
+输入：head = [], insertVal = 1
+输出：[1]
+解释：列表为空（给定的节点是 null），创建一个循环有序列表并返回这个节点。
+
+示例 3：
+输入：head = [1], insertVal = 0
+输出：[1,0]
+
+提示：
+0 <= Number of Nodes <= 5 * 10^4
+-10^6 <= Node.val <= 10^6
+-10^6 <= insertVal <= 10^6
+```
+
+代码：
+
+```java
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node next;
+
+    public Node() {}
+
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _next) {
+        val = _val;
+        next = _next;
+    }
+};
+*/
+
+class Solution {
+    public Node insert(Node head, int insertVal) {
+        Node node = new Node(insertVal);
+        if (head == null) {
+            node.next = node;
+            return node;
+        }
+        if (head.next == head) {
+            head.next = node;
+            node.next = head;
+            return head;
+        }
+        Node curr = head, next = head.next;
+        while (next != head) {
+            if (insertVal >= curr.val && insertVal <= next.val) {
+                break;
+            }
+            if (curr.val > next.val) {
+                if (insertVal > curr.val || insertVal < next.val) {
+                    break;
+                }
+            }
+            curr = curr.next;
+            next = next.next;
+        }
+        curr.next = node;
+        node.next = next;
+        return head;
+    }
+}
+```
 
