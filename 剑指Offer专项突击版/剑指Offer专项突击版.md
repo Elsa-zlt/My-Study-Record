@@ -1450,7 +1450,7 @@ class Solution {
         ListNode node = head;
         while(node != null) {
             list.add(node);
-            node = node .next;
+            node = node.next;
         }
         int i = 0, j = list.size() - 1;
         while(i < j) {
@@ -1686,6 +1686,1182 @@ class Solution {
         curr.next = node;
         node.next = next;
         return head;
+    }
+}
+```
+
+#### [剑指 Offer II 030. 插入、删除和随机访问都是 O(1) 的容器](https://leetcode.cn/problems/FortPu/)
+
+设计一个支持在平均 时间复杂度 O(1) 下，执行以下操作的数据结构：
+
+insert(val)：当元素 val 不存在时返回 true ，并向集合中插入该项，否则返回 false 。
+remove(val)：当元素 val 存在时返回 true ，并从集合中移除该项，否则返回 false 。
+getRandom：随机返回现有集合中的一项。每个元素应该有 相同的概率 被返回。
+
+
+示例 :
+
+输入: inputs = ["RandomizedSet", "insert", "remove", "insert", "getRandom", "remove", "insert", "getRandom"]
+[[], [1], [2], [2], [], [1], [2], []]
+输出: [null, true, false, true, 2, true, false, 2]
+解释:
+RandomizedSet randomSet = new RandomizedSet();  // 初始化一个空的集合
+randomSet.insert(1); // 向集合中插入 1 ， 返回 true 表示 1 被成功地插入
+
+randomSet.remove(2); // 返回 false，表示集合中不存在 2 
+
+randomSet.insert(2); // 向集合中插入 2 返回 true ，集合现在包含 [1,2] 
+
+randomSet.getRandom(); // getRandom 应随机返回 1 或 2 
+
+randomSet.remove(1); // 从集合中移除 1 返回 true 。集合现在包含 [2] 
+
+randomSet.insert(2); // 2 已在集合中，所以返回 false 
+
+randomSet.getRandom(); // 由于 2 是集合中唯一的数字，getRandom 总是返回 2 
+
+
+提示：
+
+-231 <= val <= 231 - 1
+最多进行 2 * 105 次 insert ， remove 和 getRandom 方法调用
+当调用 getRandom 方法时，集合中至少有一个元素
+
+代码：
+
+```java
+class RandomizedSet {
+    
+    List<Integer> nums;
+    Map<Integer, Integer> indices;
+    Random random;
+
+    /** Initialize your data structure here. */
+    public RandomizedSet() {
+        nums = new ArrayList<Integer>();
+        indices = new HashMap<Integer, Integer>();
+        random = new Random();
+    }
+    
+    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+    public boolean insert(int val) {
+        if(indices.containsKey(val)) {
+            return false;
+        }
+        int index = nums.size();
+        nums.add(val);
+        indices.put(val, index);
+        return true;
+    }
+    
+    /** Removes a value from the set. Returns true if the set contained the specified element. */
+    public boolean remove(int val) {
+        if(!indices.containsKey(val)) {
+            return false;
+        }
+        int index = indices.get(val);
+        int last = nums.get(nums.size() - 1);
+        nums.set(index, last);
+        indices.put(last, index);
+        nums.remove(nums.size() - 1);
+        indices.remove(val);
+        return true;
+    }
+    
+    /** Get a random element from the set. */
+    public int getRandom() {
+        int randomIndex = random.nextInt(nums.size());
+        return nums.get(randomIndex);
+    }
+}
+
+/**
+ * Your RandomizedSet object will be instantiated and called as such:
+ * RandomizedSet obj = new RandomizedSet();
+ * boolean param_1 = obj.insert(val);
+ * boolean param_2 = obj.remove(val);
+ * int param_3 = obj.getRandom();
+ */
+```
+
+#### [剑指 Offer II 031. 最近最少使用缓存](https://leetcode.cn/problems/OrIXps/)
+
+运用所掌握的数据结构，设计和实现一个  LRU (Least Recently Used，最近最少使用) 缓存机制 。
+
+实现 LRUCache 类：
+
+LRUCache(int capacity) 以正整数作为容量 capacity 初始化 LRU 缓存
+int get(int key) 如果关键字 key 存在于缓存中，则返回关键字的值，否则返回 -1 。
+void put(int key, int value) 如果关键字已经存在，则变更其数据值；如果关键字不存在，则插入该组「关键字-值」。当缓存容量达到上限时，它应该在写入新数据之前删除最久未使用的数据值，从而为新的数据值留出空间。
+
+
+示例：
+
+输入
+["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+输出
+[null, null, null, 1, null, -1, null, -1, 3, 4]
+
+解释
+LRUCache lRUCache = new LRUCache(2);
+lRUCache.put(1, 1); // 缓存是 {1=1}
+lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+lRUCache.get(1);    // 返回 1
+lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+lRUCache.get(2);    // 返回 -1 (未找到)
+lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+lRUCache.get(1);    // 返回 -1 (未找到)
+lRUCache.get(3);    // 返回 3
+lRUCache.get(4);    // 返回 4
+
+
+提示：
+
+1 <= capacity <= 3000
+0 <= key <= 10000
+0 <= value <= 105
+最多调用 2 * 105 次 get 和 put
+
+代码：
+
+```java
+public class LRUCache {
+    class DLinkedNode {
+        int key;
+        int value;
+        DLinkedNode prev;
+        DLinkedNode next;
+        public DLinkedNode() {}
+        public DLinkedNode(int _key, int _value) {key = _key; value = _value;}
+    }
+
+    private Map<Integer, DLinkedNode> cache = new HashMap<Integer, DLinkedNode>();
+    private int size;
+    private int capacity;
+    private DLinkedNode head, tail;
+
+    public LRUCache(int capacity) {
+        this.size = 0;
+        this.capacity = capacity;
+        // 使用伪头部和伪尾部节点
+        head = new DLinkedNode();
+        tail = new DLinkedNode();
+        head.next = tail;
+        tail.prev = head;
+    }
+
+    public int get(int key) {
+        DLinkedNode node = cache.get(key);
+        if (node == null) {
+            return -1;
+        }
+        // 如果 key 存在，先通过哈希表定位，再移到头部
+        moveToHead(node);
+        return node.value;
+    }
+
+    public void put(int key, int value) {
+        DLinkedNode node = cache.get(key);
+        if (node == null) {
+            // 如果 key 不存在，创建一个新的节点
+            DLinkedNode newNode = new DLinkedNode(key, value);
+            // 添加进哈希表
+            cache.put(key, newNode);
+            // 添加至双向链表的头部
+            addToHead(newNode);
+            ++size;
+            if (size > capacity) {
+                // 如果超出容量，删除双向链表的尾部节点
+                DLinkedNode tail = removeTail();
+                // 删除哈希表中对应的项
+                cache.remove(tail.key);
+                --size;
+            }
+        }
+        else {
+            // 如果 key 存在，先通过哈希表定位，再修改 value，并移到头部
+            node.value = value;
+            moveToHead(node);
+        }
+    }
+
+    private void addToHead(DLinkedNode node) {
+        node.prev = head;
+        node.next = head.next;
+        head.next.prev = node;
+        head.next = node;
+    }
+
+    private void removeNode(DLinkedNode node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private void moveToHead(DLinkedNode node) {
+        removeNode(node);
+        addToHead(node);
+    }
+
+    private DLinkedNode removeTail() {
+        DLinkedNode res = tail.prev;
+        removeNode(res);
+        return res;
+    }
+}
+```
+
+#### [剑指 Offer II 032. 有效的变位词](https://leetcode.cn/problems/dKk3P7/)
+
+给定两个字符串 s 和 t ，编写一个函数来判断它们是不是一组变位词（字母异位词）。
+
+注意：若 s 和 t 中每个字符出现的次数都相同且字符顺序不完全相同，则称 s 和 t 互为变位词（字母异位词）。
+
+示例 1:
+
+输入: s = "anagram", t = "nagaram"
+输出: true
+示例 2:
+
+输入: s = "rat", t = "car"
+输出: false
+示例 3:
+
+输入: s = "a", t = "a"
+输出: false
+
+
+提示:
+
+1 <= s.length, t.length <= 5 * 104
+s and t 仅包含小写字母
+
+代码：
+
+```java
+class Solution {
+    public boolean isAnagram(String s, String t) {
+        if(s.length() != t.length() || s.equals(t)) {
+            return false;
+        }
+        char[] str1 = s.toCharArray();
+        char[] str2 = t.toCharArray();
+        Arrays.sort(str1);
+        Arrays.sort(str2);
+        return Arrays.equals(str1, str2);
+    }
+}
+```
+
+#### [剑指 Offer II 033. 变位词组](https://leetcode.cn/problems/sfvd7V/)
+
+给定一个字符串数组 strs ，将 变位词 组合在一起。 可以按任意顺序返回结果列表。
+
+注意：若两个字符串中每个字符出现的次数都相同，则称它们互为变位词。
+
+示例 1:
+
+输入: strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+输出: [["bat"],["nat","tan"],["ate","eat","tea"]]
+示例 2:
+
+输入: strs = [""]
+输出: [[""]]
+示例 3:
+
+输入: strs = ["a"]
+输出: [["a"]]
+
+
+提示：
+
+1 <= strs.length <= 104
+0 <= strs[i].length <= 100
+strs[i] 仅包含小写字母
+
+代码：
+
+```java
+class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for(String str : strs) {
+            char[] array = str.toCharArray();
+            Arrays.sort(array);
+            String key = new String(array);
+            List<String> list = map.getOrDefault(key, new ArrayList<String>());
+            list.add(str);
+            map.put(key, list);
+        }
+        return new ArrayList<List<String>>(map.values());
+    }
+}
+```
+
+#### [剑指 Offer II 034. 外星语言是否排序](https://leetcode.cn/problems/lwyVBB/)
+
+某种外星语也使用英文小写字母，但可能顺序 order 不同。字母表的顺序（order）是一些小写字母的排列。
+
+给定一组用外星语书写的单词 words，以及其字母表的顺序 order，只有当给定的单词在这种外星语中按字典序排列时，返回 true；否则，返回 false。
+
+示例 1：
+
+输入：words = ["hello","leetcode"], order = "hlabcdefgijkmnopqrstuvwxyz"
+输出：true
+解释：在该语言的字母表中，'h' 位于 'l' 之前，所以单词序列是按字典序排列的。
+示例 2：
+
+输入：words = ["word","world","row"], order = "worldabcefghijkmnpqstuvxyz"
+输出：false
+解释：在该语言的字母表中，'d' 位于 'l' 之后，那么 words[0] > words[1]，因此单词序列不是按字典序排列的。
+示例 3：
+
+输入：words = ["apple","app"], order = "abcdefghijklmnopqrstuvwxyz"
+输出：false
+解释：当前三个字符 "app" 匹配时，第二个字符串相对短一些，然后根据词典编纂规则 "apple" > "app"，因为 'l' > '∅'，其中 '∅' 是空白字符，定义为比任何其他字符都小（更多信息）。
+
+
+提示：
+
+1 <= words.length <= 100
+1 <= words[i].length <= 20
+order.length == 26
+在 words[i] 和 order 中的所有字符都是英文小写字母。
+
+代码：
+
+```java
+class Solution {
+    public boolean isAlienSorted(String[] words, String order) {
+        int[] index = new int[26];
+        for(int i = 0; i < order.length(); i++) {
+            index[order.charAt(i) - 'a'] = i;
+        }
+        for(int i = 1; i < words.length; i++) {
+            boolean valid = false;
+            for(int j = 0; j < words[i - 1].length() && j < words[i].length(); j++) {
+                int prev = index[words[i - 1].charAt(j) - 'a'];
+                int curr = index[words[i].charAt(j) - 'a'];
+                if(prev < curr) {
+                    valid = true;
+                    break;
+                } else if(prev > curr) {
+                    return false;
+                }
+            }
+            if(!valid) {
+                if(words[i - 1].length() > words[i].length()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+```
+
+#### [剑指 Offer II 035. 最小时间差](https://leetcode.cn/problems/569nqc/)
+
+给定一个 24 小时制（小时:分钟 "HH:MM"）的时间列表，找出列表中任意两个时间的最小时间差并以分钟数表示。
+
+示例 1：
+
+输入：timePoints = ["23:59","00:00"]
+输出：1
+示例 2：
+
+输入：timePoints = ["00:00","23:59","00:00"]
+输出：0
+
+
+提示：
+
+2 <= timePoints <= 2 * 104
+timePoints[i] 格式为 "HH:MM"
+
+代码：
+
+```java
+class Solution {
+    public int findMinDifference(List<String> timePoints) {
+        Collections.sort(timePoints);
+        int ans = Integer.MAX_VALUE;
+        int t0Minutes = getMinutes(timePoints.get(0));
+        int preMinutes = t0Minutes;
+        for (int i = 1; i < timePoints.size(); ++i) {
+            int minutes = getMinutes(timePoints.get(i));
+            ans = Math.min(ans, minutes - preMinutes); // 相邻时间的时间差
+            preMinutes = minutes;
+        }
+        ans = Math.min(ans, t0Minutes + 1440 - preMinutes); // 首尾时间的时间差
+        return ans;
+    }
+
+    public int getMinutes(String t) {
+        return ((t.charAt(0) - '0') * 10 + (t.charAt(1) - '0')) * 60 + (t.charAt(3) - '0') * 10 + (t.charAt(4) - '0');
+    }
+}
+```
+
+#### [剑指 Offer II 036. 后缀表达式](https://leetcode.cn/problems/8Zf90G/)
+
+根据 逆波兰表示法，求该后缀表达式的计算结果。
+
+有效的算符包括 +、-、*、/ 。每个运算对象可以是整数，也可以是另一个逆波兰表达式。
+
+说明：
+
+整数除法只保留整数部分。
+给定逆波兰表达式总是有效的。换句话说，表达式总会得出有效数值且不存在除数为 0 的情况。
+
+
+示例 1：
+
+输入：tokens = ["2","1","+","3","*"]
+输出：9
+解释：该算式转化为常见的中缀算术表达式为：((2 + 1) * 3) = 9
+示例 2：
+
+输入：tokens = ["4","13","5","/","+"]
+输出：6
+解释：该算式转化为常见的中缀算术表达式为：(4 + (13 / 5)) = 6
+示例 3：
+
+输入：tokens = ["10","6","9","3","+","-11","*","/","*","17","+","5","+"]
+输出：22
+解释：
+该算式转化为常见的中缀算术表达式为：
+  ((10 * (6 / ((9 + 3) * -11))) + 17) + 5
+= ((10 * (6 / (12 * -11))) + 17) + 5
+= ((10 * (6 / -132)) + 17) + 5
+= ((10 * 0) + 17) + 5
+= (0 + 17) + 5
+= 17 + 5
+= 22
+
+
+提示：
+
+1 <= tokens.length <= 104
+tokens[i] 要么是一个算符（"+"、"-"、"*" 或 "/"），要么是一个在范围 [-200, 200] 内的整数
+
+代码：
+
+```java
+class Solution {
+    public int evalRPN(String[] tokens) {
+        Deque<Integer> stack = new LinkedList<Integer>();
+        int n = tokens.length;
+        for(int i = 0; i < n; i++) {
+            String token = tokens[i];
+            if(isNumber(token)) {
+                stack.push(Integer.parseInt(token));
+            } else {
+                int num2 = stack.pop();
+                int num1 = stack.pop();
+                switch(token) {
+                    case "+":
+                        stack.push(num1 + num2);
+                        break;
+                    case "-":
+                        stack.push(num1 - num2);
+                        break;
+                    case "*":
+                        stack.push(num1 * num2);
+                        break;
+                    case "/":
+                        stack.push(num1 / num2);
+                        break;
+                    default:
+                }
+            }
+        }
+        return stack.pop();
+    }
+
+    public boolean isNumber(String token) {
+        return !("+".equals(token) || "-".equals(token) || "*".equals(token) || "/".equals(token));
+    }
+}
+```
+
+#### [剑指 Offer II 037. 小行星碰撞](https://leetcode.cn/problems/XagZNi/)
+
+给定一个整数数组 asteroids，表示在同一行的小行星。
+
+对于数组中的每一个元素，其绝对值表示小行星的大小，正负表示小行星的移动方向（正表示向右移动，负表示向左移动）。每一颗小行星以相同的速度移动。
+
+找出碰撞后剩下的所有小行星。碰撞规则：两个行星相互碰撞，较小的行星会爆炸。如果两颗行星大小相同，则两颗行星都会爆炸。两颗移动方向相同的行星，永远不会发生碰撞。
+
+示例 1：
+
+输入：asteroids = [5,10,-5]
+输出：[5,10]
+解释：10 和 -5 碰撞后只剩下 10 。 5 和 10 永远不会发生碰撞。
+示例 2：
+
+输入：asteroids = [8,-8]
+输出：[]
+解释：8 和 -8 碰撞后，两者都发生爆炸。
+示例 3：
+
+输入：asteroids = [10,2,-5]
+输出：[10]
+解释：2 和 -5 发生碰撞后剩下 -5 。10 和 -5 发生碰撞后剩下 10 。
+示例 4：
+
+输入：asteroids = [-2,-1,1,2]
+输出：[-2,-1,1,2]
+解释：-2 和 -1 向左移动，而 1 和 2 向右移动。 由于移动方向相同的行星不会发生碰撞，所以最终没有行星发生碰撞。 
+
+
+提示：
+
+2 <= asteroids.length <= 104
+-1000 <= asteroids[i] <= 1000
+asteroids[i] != 0
+
+代码：
+
+```java
+class Solution {
+    public int[] asteroidCollision(int[] asteroids) {
+        Deque<Integer> stack = new ArrayDeque<Integer>();
+        for(int aster : asteroids) {
+            boolean alive = true;
+            while(alive && aster < 0 && !stack.isEmpty() && stack.peek() > 0) {
+                alive = stack.peek() < -aster;
+                if(stack.peek() <= -aster) {
+                    stack.pop();
+                }
+            }
+            if(alive) {
+                stack.push(aster);
+            }
+        }
+        int size = stack.size();
+        int[] ans = new int[size];
+        for(int i = size - 1; i >= 0; i--) {
+            ans[i] =stack.pop();
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 038. 每日温度](https://leetcode.cn/problems/iIQa4I/)
+
+请根据每日 气温 列表 temperatures ，重新生成一个列表，要求其对应位置的输出为：要想观测到更高的气温，至少需要等待的天数。如果气温在这之后都不会升高，请在该位置用 0 来代替。
+
+示例 1:
+
+输入: temperatures = [73,74,75,71,69,72,76,73]
+输出: [1,1,4,2,1,1,0,0]
+示例 2:
+
+输入: temperatures = [30,40,50,60]
+输出: [1,1,1,0]
+示例 3:
+
+输入: temperatures = [30,60,90]
+输出: [1,1,0]
+
+
+提示：
+
+1 <= temperatures.length <= 105
+30 <= temperatures[i] <= 100
+
+代码：
+
+```java
+class Solution {
+    public int[] dailyTemperatures(int[] temperatures) {
+        int length = temperatures.length;
+        int[] ans = new int[length];
+        int[] next = new int[101];
+        Arrays.fill(next, Integer.MAX_VALUE);
+        for(int i = length - 1; i >= 0; i--) {
+            int warnerIndex = Integer.MAX_VALUE;
+            for(int t = temperatures[i] + 1; t <= 100; t++) {
+                if(next[t] < warnerIndex) {
+                    warnerIndex = next[t];
+                }
+            }
+            if(warnerIndex < Integer.MAX_VALUE) {
+                ans[i] = warnerIndex - i;
+            }
+            next[temperatures[i]] = i;
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 039. 直方图最大矩形面积](https://leetcode.cn/problems/0ynMMM/)
+
+给定非负整数数组 heights ，数组中的数字用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+示例 1:
+
+输入：heights = [2,1,5,6,2,3]
+输出：10
+解释：最大的矩形为图中红色区域，面积为 10
+示例 2：
+
+输入： heights = [2,4]
+输出： 4
+
+
+提示：
+
+1 <= heights.length <=105
+0 <= heights[i] <= 104
+
+代码：
+
+```java
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        int n = heights.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+        Deque<Integer> mono_stack = new ArrayDeque<Integer>();
+        for(int i = 0; i < n; i++) {
+            while(!mono_stack.isEmpty() && heights[mono_stack.peek()] >= heights[i]) {
+                mono_stack.pop();
+            }
+            left[i] = (mono_stack.isEmpty() ? -1 : mono_stack.peek());
+            mono_stack.push(i);
+        }
+        mono_stack.clear();
+        for(int i = n - 1; i >= 0; i--) {
+            while(!mono_stack.isEmpty() && heights[mono_stack.peek()] >= heights[i]) {
+                mono_stack.pop();
+            }
+            right[i] = (mono_stack.isEmpty() ? n : mono_stack.peek());
+            mono_stack.push(i);
+        }
+        int ans = 0;
+        for(int i = 0; i < n; i++) {
+            ans = Math.max(ans, (right[i] - left[i] - 1) * heights[i]);
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 040. 矩阵中最大的矩形](https://leetcode.cn/problems/PLYXKQ/)
+
+给定一个由 0 和 1 组成的矩阵 matrix ，找出只包含 1 的最大矩形，并返回其面积。
+
+注意：此题 matrix 输入格式为一维 01 字符串数组。
+
+示例 1：
+
+输入：matrix = ["10100","10111","11111","10010"]
+输出：6
+解释：最大矩形如上图所示。
+示例 2：
+
+输入：matrix = []
+输出：0
+示例 3：
+
+输入：matrix = ["0"]
+输出：0
+示例 4：
+
+输入：matrix = ["1"]
+输出：1
+示例 5：
+
+输入：matrix = ["00"]
+输出：0
+
+
+提示：
+
+rows == matrix.length
+cols == matrix[0].length
+0 <= row, cols <= 200
+matrix[i][j] 为 '0' 或 '1'
+
+代码：
+
+```java
+class Solution {
+    public int maximalRectangle(String[] matrix) {
+        int m = matrix.length;
+        if(m == 0) {
+            return 0;
+        }
+        int n = matrix[0].length();
+        int[][] left = new int[m][n];
+
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(matrix[i].charAt(j) == '1') {
+                    left[i][j] = (j == 0 ? 0 : left[i][j - 1]) + 1;
+                }
+            }
+        }
+
+        int ret = 0;
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(matrix[i].charAt(j) == '0') {
+                    continue;
+                }
+                int width = left[i][j];
+                int area = width;
+                for(int k = i - 1; k >= 0; k--) {
+                    width = Math.min(width, left[k][j]);
+                    area = Math.max(area, (i - k + 1) * width);
+                }
+                ret = Math.max(ret, area);
+            }
+        }
+        return ret;
+    }
+}
+```
+
+#### [剑指 Offer II 041. 滑动窗口的平均值](https://leetcode.cn/problems/qIsx9U/)
+
+给定一个整数数据流和一个窗口大小，根据该滑动窗口的大小，计算滑动窗口里所有数字的平均值。
+
+实现 MovingAverage 类：
+
+MovingAverage(int size) 用窗口大小 size 初始化对象。
+double next(int val) 成员函数 next 每次调用的时候都会往滑动窗口增加一个整数，请计算并返回数据流中最后 size 个值的移动平均值，即滑动窗口里所有数字的平均值。
+
+
+示例：
+
+输入：
+inputs = ["MovingAverage", "next", "next", "next", "next"]
+inputs = [[3], [1], [10], [3], [5]]
+输出：
+[null, 1.0, 5.5, 4.66667, 6.0]
+
+解释：
+MovingAverage movingAverage = new MovingAverage(3);
+movingAverage.next(1); // 返回 1.0 = 1 / 1
+movingAverage.next(10); // 返回 5.5 = (1 + 10) / 2
+movingAverage.next(3); // 返回 4.66667 = (1 + 10 + 3) / 3
+movingAverage.next(5); // 返回 6.0 = (10 + 3 + 5) / 3
+
+
+提示：
+
+1 <= size <= 1000
+-105 <= val <= 105
+最多调用 next 方法 104 次
+
+代码：
+
+```java
+class MovingAverage {
+
+     Queue<Integer> queue;
+     int size;
+     double sum;
+     
+    /** Initialize your data structure here. */
+    public MovingAverage(int size) {
+        queue = new ArrayDeque<Integer>();
+        this.size = size;
+        sum = 0;
+    }
+    
+    public double next(int val) {
+        if(queue.size() == size) {
+            sum -= queue.poll();
+        }
+        queue.offer(val);
+        sum += val;
+        return sum / queue.size();
+    }
+}
+
+/**
+ * Your MovingAverage object will be instantiated and called as such:
+ * MovingAverage obj = new MovingAverage(size);
+ * double param_1 = obj.next(val);
+ */
+```
+
+#### [剑指 Offer II 042. 最近请求次数](https://leetcode.cn/problems/H8086Q/)
+
+写一个 RecentCounter 类来计算特定时间范围内最近的请求。
+
+请实现 RecentCounter 类：
+
+RecentCounter() 初始化计数器，请求数为 0 。
+int ping(int t) 在时间 t 添加一个新请求，其中 t 表示以毫秒为单位的某个时间，并返回过去 3000 毫秒内发生的所有请求数（包括新请求）。确切地说，返回在 [t-3000, t] 内发生的请求数。
+保证 每次对 ping 的调用都使用比之前更大的 t 值。
+
+示例：
+
+输入：
+inputs = ["RecentCounter", "ping", "ping", "ping", "ping"]
+inputs = [[], [1], [100], [3001], [3002]]
+输出：
+[null, 1, 2, 3, 3]
+
+解释：
+RecentCounter recentCounter = new RecentCounter();
+recentCounter.ping(1);     // requests = [1]，范围是 [-2999,1]，返回 1
+recentCounter.ping(100);   // requests = [1, 100]，范围是 [-2900,100]，返回 2
+recentCounter.ping(3001);  // requests = [1, 100, 3001]，范围是 [1,3001]，返回 3
+recentCounter.ping(3002);  // requests = [1, 100, 3001, 3002]，范围是 [2,3002]，返回 3
+
+
+提示：
+
+1 <= t <= 109
+保证每次对 ping 调用所使用的 t 值都 严格递增
+至多调用 ping 方法 104 次
+
+代码：
+
+```java
+class RecentCounter {
+    
+    Queue<Integer> queue;
+
+    public RecentCounter() {
+        queue = new ArrayDeque<Integer>();
+    }
+    
+    public int ping(int t) {
+        queue.offer(t);
+        while(queue.peek() < t - 3000) {
+            queue.poll();
+        }
+        return queue.size();
+    }
+}
+
+/**
+ * Your RecentCounter object will be instantiated and called as such:
+ * RecentCounter obj = new RecentCounter();
+ * int param_1 = obj.ping(t);
+ */
+```
+
+#### [剑指 Offer II 043. 往完全二叉树添加节点](https://leetcode.cn/problems/NaqhDT/)
+
+完全二叉树是每一层（除最后一层外）都是完全填充（即，节点数达到最大，第 n 层有 2n-1 个节点）的，并且所有的节点都尽可能地集中在左侧。
+
+设计一个用完全二叉树初始化的数据结构 CBTInserter，它支持以下几种操作：
+
+CBTInserter(TreeNode root) 使用根节点为 root 的给定树初始化该数据结构；
+CBTInserter.insert(int v)  向树中插入一个新节点，节点类型为 TreeNode，值为 v 。使树保持完全二叉树的状态，并返回插入的新节点的父节点的值；
+CBTInserter.get_root() 将返回树的根节点。
+
+
+示例 1：
+
+输入：inputs = ["CBTInserter","insert","get_root"], inputs = [[[1]],[2],[]]
+输出：[null,1,[1,2]]
+示例 2：
+
+输入：inputs = ["CBTInserter","insert","insert","get_root"], inputs = [[[1,2,3,4,5,6]],[7],[8],[]]
+输出：[null,3,4,[1,2,3,4,5,6,7,8]]
+
+
+提示：
+
+最初给定的树是完全二叉树，且包含 1 到 1000 个节点。
+每个测试用例最多调用 CBTInserter.insert  操作 10000 次。
+给定节点或插入节点的每个值都在 0 到 5000 之间。
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class CBTInserter {
+    
+    Queue<TreeNode> candidate;
+    TreeNode root;
+    
+    public CBTInserter(TreeNode root) {
+        this.candidate = new ArrayDeque<TreeNode>();
+        this.root = root;
+        
+        Queue<TreeNode> queue = new ArrayDeque<TreeNode>();
+        queue.offer(root);
+        
+        while(!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if(node.left != null) {
+                queue.offer(node.left);
+            }
+            if(node.right != null) {
+                queue.offer(node.right);
+            }
+            if(!(node.left != null && node.right != null)) {
+                candidate.offer(node);
+            }
+        }
+    }
+    
+    public int insert(int val) {
+        TreeNode child = new TreeNode(val);
+        TreeNode node = candidate.peek();
+        int ret = node.val;
+        if(node.left == null) {
+            node.left = child;
+        } else {
+            node.right = child;
+            candidate.poll();
+        }
+        candidate.offer(child);
+        return ret;
+    }
+    
+    
+    public TreeNode get_root() {
+        return root;
+    }
+}
+
+/**
+ * Your CBTInserter object will be instantiated and called as such:
+ * CBTInserter obj = new CBTInserter(root);
+ * int param_1 = obj.insert(v);
+ * TreeNode param_2 = obj.get_root();
+ */
+```
+
+#### [剑指 Offer II 044. 二叉树每层的最大值](https://leetcode.cn/problems/hPov7L/)
+
+给定一棵二叉树的根节点 root ，请找出该二叉树中每一层的最大值。
+
+示例1：
+
+输入: root = [1,3,2,5,3,null,9]
+输出: [1,3,9]
+解释:
+          1
+         / \
+        3   2
+       / \   \  
+      5   3   9 
+示例2：
+
+输入: root = [1,2,3]
+输出: [1,3]
+解释:
+          1
+         / \
+        2   3
+示例3：
+
+输入: root = [1]
+输出: [1]
+示例4：
+
+输入: root = [1,null,2]
+输出: [1,2]
+解释:      
+           1 
+            \
+             2     
+示例5：
+
+输入: root = []
+输出: []
+
+
+提示：
+
+二叉树的节点个数的范围是 [0,104]
+-231 <= Node.val <= 231 - 1
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<Integer> largestValues(TreeNode root) {
+        if(root == null) {
+            return new ArrayList<Integer>();
+        }
+        List<Integer> res = new ArrayList<Integer>();
+        dfs(res, root, 0);
+        return res;
+    }
+
+    public void dfs(List<Integer> res, TreeNode root, int curHeight) {
+        if(curHeight == res.size()) {
+            res.add(root.val);
+        } else {
+            res.set(curHeight, Math.max(res.get(curHeight), root.val));
+        }
+        if(root.left != null) {
+            dfs(res, root.left, curHeight + 1);
+        } 
+        if(root.right != null) {
+            dfs(res, root.right, curHeight + 1);
+        }
+    }
+}
+```
+
+#### [剑指 Offer II 045. 二叉树最底层最左边的值](https://leetcode.cn/problems/LwUNpT/)
+
+给定一个二叉树的 根节点 root，请找出该二叉树的 最底层 最左边 节点的值。
+
+假设二叉树中至少有一个节点。
+
+示例 1:
+
+输入: root = [2,1,3]
+输出: 1
+示例 2:
+
+输入: [1,2,3,4,null,5,6,null,null,7]
+输出: 7
+
+
+提示:
+
+二叉树的节点个数的范围是 [1,104]
+-231 <= Node.val <= 231 - 1 
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int curVal = 0;
+    int curHeight = 0;
+
+    public int findBottomLeftValue(TreeNode root) {
+        int curHeight = 0;
+        dfs(root, 0);
+        return curVal;    
+    }
+
+    public void dfs(TreeNode root, int height) {
+        if(root == null) {
+            return;
+        }
+        height++;
+        dfs(root.left, height);
+        dfs(root.right, height);
+        if(height > curHeight) {
+            curHeight = height;
+            curVal = root.val;
+        }
+    }
+}
+```
+
+#### [剑指 Offer II 046. 二叉树的右侧视图](https://leetcode.cn/problems/WNC0Lk/)
+
+给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+示例 1:
+
+输入: [1,2,3,null,5,null,4]
+输出: [1,3,4]
+示例 2:
+
+输入: [1,null,3]
+输出: [1,3]
+示例 3:
+
+输入: []
+输出: []
+
+
+提示:
+
+二叉树的节点个数的范围是 [0,100]
+-100 <= Node.val <= 100 
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<Integer> res;
+
+    public List<Integer> rightSideView(TreeNode root) {
+        res = new ArrayList<>();
+        recur(root, 0);
+        return res;
+    }
+
+    public void recur(TreeNode root, int cnt) {
+        if (root == null) {
+            return;
+        }
+        if(cnt >= res.size()) res.add(root.val);
+        recur(root.right, cnt + 1);
+        recur(root.left, cnt + 1);
     }
 }
 ```
