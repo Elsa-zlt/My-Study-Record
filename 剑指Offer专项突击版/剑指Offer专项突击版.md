@@ -3096,3 +3096,199 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer II 050. 向下的路径节点之和](https://leetcode.cn/problems/6eUYwP/)
+
+给定一个二叉树的根节点 root ，和一个整数 targetSum ，求该二叉树里节点值之和等于 targetSum 的 路径 的数目。
+
+路径 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
+
+示例 1：
+
+输入：root = [10,5,-3,3,2,null,11,3,-2,null,1], targetSum = 8
+输出：3
+解释：和等于 8 的路径有 3 条，如图所示。
+示例 2：
+
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22
+输出：3
+
+
+提示:
+
+二叉树的节点个数的范围是 [0,1000]
+-109 <= Node.val <= 109 
+-1000 <= targetSum <= 1000 
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int pathSum(TreeNode root, int targetSum) {
+        if (root == null) {
+            return 0;
+        }
+        int count = countPaths(root, targetSum);
+        count += pathSum(root.left, targetSum);
+        count += pathSum(root.right, targetSum);
+        return count;
+    }
+
+    public int countPaths(TreeNode node, long targetSum) {
+        if (node == null) {
+            return 0;
+        }
+        int count = 0;
+        if (node.val == targetSum) {
+            count++;
+        }
+        count += countPaths(node.left, targetSum - node.val);
+        count += countPaths(node.right, targetSum - node.val);
+        return count;
+    }
+}
+```
+
+#### [剑指 Offer II 051. 节点之和最大的路径](https://leetcode.cn/problems/jC7MId/)
+
+路径 被定义为一条从树中任意节点出发，沿父节点-子节点连接，达到任意节点的序列。同一个节点在一条路径序列中 至多出现一次 。该路径 至少包含一个 节点，且不一定经过根节点。
+
+路径和 是路径中各节点值的总和。
+
+给定一个二叉树的根节点 root ，返回其 最大路径和，即所有路径上节点值之和的最大值。
+
+示例 1：
+
+输入：root = [1,2,3]
+输出：6
+解释：最优路径是 2 -> 1 -> 3 ，路径和为 2 + 1 + 3 = 6
+示例 2：
+
+输入：root = [-10,9,20,null,null,15,7]
+输出：42
+解释：最优路径是 15 -> 20 -> 7 ，路径和为 15 + 20 + 7 = 42
+
+
+提示：
+
+树中节点数目范围是 [1, 3 * 104]
+-1000 <= Node.val <= 1000
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int maxSum = Integer.MIN_VALUE;
+
+    public int maxPathSum(TreeNode root) {
+        maxGain(root);
+        return maxSum;
+    }
+
+    public int maxGain(TreeNode node) {
+        if(node == null) {
+            return 0;
+        }
+        int leftGain = Math.max(maxGain(node.left), 0);
+        int rightGain = Math.max(maxGain(node.right), 0);
+
+        int priceNewpath = node.val + leftGain + rightGain;
+
+        maxSum = Math.max(maxSum, priceNewpath);
+
+        return node.val + Math.max(leftGain, rightGain);
+    }
+}
+```
+
+#### [剑指 Offer II 052. 展平二叉搜索树](https://leetcode.cn/problems/NYBBNL/)
+
+给你一棵二叉搜索树，请 按中序遍历 将其重新排列为一棵递增顺序搜索树，使树中最左边的节点成为树的根节点，并且每个节点没有左子节点，只有一个右子节点。
+
+示例 1：
+
+输入：root = [5,3,6,2,4,null,8,1,null,null,null,7,9]
+输出：[1,null,2,null,3,null,4,null,5,null,6,null,7,null,8,null,9]
+示例 2：
+
+输入：root = [5,1,7]
+输出：[1,null,5,null,7]
+
+
+提示：
+
+树中节点数的取值范围是 [1, 100]
+0 <= Node.val <= 1000
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode increasingBST(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        inorder(root, res);
+
+        TreeNode dummyNode = new TreeNode(-1);
+        TreeNode currNode = dummyNode;
+        for(int value : res) {
+            currNode.right = new TreeNode(value);
+            currNode = currNode.right;
+        }
+        return dummyNode.right;
+    }
+
+    public void inorder(TreeNode node, List<Integer> res) {
+        if(node == null) {
+            return;
+        }
+        inorder(node.left, res);
+        res.add(node.val);
+        inorder(node.right, res);
+    }
+}
+```
+
