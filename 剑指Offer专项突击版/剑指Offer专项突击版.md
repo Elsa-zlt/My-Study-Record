@@ -3292,3 +3292,223 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer II 053. 二叉搜索树中的中序后继](https://leetcode.cn/problems/P5rCT8/)
+
+给定一棵二叉搜索树和其中的一个节点 p ，找到该节点在树中的中序后继。如果节点没有中序后继，请返回 null 。
+
+节点 p 的后继是值比 p.val 大的节点中键值最小的节点，即按中序遍历的顺序节点 p 的下一个节点。
+
+示例 1：
+
+输入：root = [2,1,3], p = 1
+输出：2
+解释：这里 1 的中序后继是 2。请注意 p 和返回值都应是 TreeNode 类型。
+示例 2：
+
+输入：root = [5,3,6,2,4,null,null,1], p = 6
+输出：null
+解释：因为给出的节点没有中序后继，所以答案就返回 null 了。
+
+
+提示：
+
+树中节点的数目在范围 [1, 104] 内。
+-105 <= Node.val <= 105
+树中各节点的值均保证唯一。
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        Deque<TreeNode> stack = new ArrayDeque<TreeNode>();
+        TreeNode prev = null, curr = root;
+        while(!stack.isEmpty() || curr != null) {
+            while(curr != null) {
+                stack.push(curr);
+                curr = curr.left;
+            }
+            curr = stack.pop();
+            if(prev == p) {
+                return curr;
+            }
+            prev = curr;
+            curr = curr.right;
+        }
+        return null;
+    }
+}
+```
+
+#### [剑指 Offer II 054. 所有大于等于节点的值之和](https://leetcode.cn/problems/w6cpku/)
+
+给定一个二叉搜索树，请将它的每个节点的值替换成树中大于或者等于该节点值的所有节点值之和。
+
+提醒一下，二叉搜索树满足下列约束条件：
+
+节点的左子树仅包含键 小于 节点键的节点。
+节点的右子树仅包含键 大于 节点键的节点。
+左右子树也必须是二叉搜索树。
+
+
+示例 1：
+
+输入：root = [4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
+输出：[30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]
+示例 2：
+
+输入：root = [0,null,1]
+输出：[1,null,1]
+示例 3：
+
+输入：root = [1,0,2]
+输出：[3,3,2]
+示例 4：
+
+输入：root = [3,2,4,1]
+输出：[7,9,4,10]
+
+
+提示：
+
+树中的节点数介于 0 和 104 之间。
+每个节点的值介于 -104 和 104 之间。
+树中的所有值 互不相同 。
+给定的树为二叉搜索树。
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    int sum = 0;
+
+    public TreeNode convertBST(TreeNode root) {
+        if(root != null) {
+            convertBST(root.right);
+            sum += root.val;
+            root.val = sum;
+            convertBST(root.left);
+        }
+        return root;
+    }
+}
+```
+
+#### [剑指 Offer II 055. 二叉搜索树迭代器](https://leetcode.cn/problems/kTOapQ/)
+
+实现一个二叉搜索树迭代器类BSTIterator ，表示一个按中序遍历二叉搜索树（BST）的迭代器：
+
+BSTIterator(TreeNode root) 初始化 BSTIterator 类的一个对象。BST 的根节点 root 会作为构造函数的一部分给出。指针应初始化为一个不存在于 BST 中的数字，且该数字小于 BST 中的任何元素。
+boolean hasNext() 如果向指针右侧遍历存在数字，则返回 true ；否则返回 false 。
+int next()将指针向右移动，然后返回指针处的数字。
+注意，指针初始化为一个不存在于 BST 中的数字，所以对 next() 的首次调用将返回 BST 中的最小元素。
+
+可以假设 next() 调用总是有效的，也就是说，当调用 next() 时，BST 的中序遍历中至少存在一个下一个数字。
+
+示例：
+
+输入
+inputs = ["BSTIterator", "next", "next", "hasNext", "next", "hasNext", "next", "hasNext", "next", "hasNext"]
+inputs = [[[7, 3, 15, null, null, 9, 20]], [], [], [], [], [], [], [], [], []]
+输出
+[null, 3, 7, true, 9, true, 15, true, 20, false]
+
+解释
+BSTIterator bSTIterator = new BSTIterator([7, 3, 15, null, null, 9, 20]);
+bSTIterator.next();    // 返回 3
+bSTIterator.next();    // 返回 7
+bSTIterator.hasNext(); // 返回 True
+bSTIterator.next();    // 返回 9
+bSTIterator.hasNext(); // 返回 True
+bSTIterator.next();    // 返回 15
+bSTIterator.hasNext(); // 返回 True
+bSTIterator.next();    // 返回 20
+bSTIterator.hasNext(); // 返回 False
+
+
+提示：
+
+树中节点的数目在范围 [1, 105] 内
+0 <= Node.val <= 106
+最多调用 105 次 hasNext 和 next 操作
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class BSTIterator {
+
+    private int idx;
+    private List<Integer> arr;
+
+    public BSTIterator(TreeNode root) {
+        idx = 0;
+        arr = new ArrayList<Integer>();
+        inorderTraversal(root, arr);
+    }
+    
+    public int next() {
+        return arr.get(idx++);
+    }
+    
+    public boolean hasNext() {
+        return idx < arr.size();
+    }
+
+    public void inorderTraversal(TreeNode root, List<Integer> arr) {
+        if(root == null) {
+            return;
+        }
+        inorderTraversal(root.left, arr);
+        arr.add(root.val);
+        inorderTraversal(root.right, arr);
+    }
+}
+
+/**
+ * Your BSTIterator object will be instantiated and called as such:
+ * BSTIterator obj = new BSTIterator(root);
+ * int param_1 = obj.next();
+ * boolean param_2 = obj.hasNext();
+ */
+```
+
