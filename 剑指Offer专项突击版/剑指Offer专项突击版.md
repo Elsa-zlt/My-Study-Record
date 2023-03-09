@@ -3512,3 +3512,168 @@ class BSTIterator {
  */
 ```
 
+#### [剑指 Offer II 056. 二叉搜索树中两个节点之和](https://leetcode.cn/problems/opLdQZ/)
+
+给定一个二叉搜索树的 根节点 root 和一个整数 k , 请判断该二叉搜索树中是否存在两个节点它们的值之和等于 k 。假设二叉搜索树中节点的值均唯一。
+
+示例 1：
+
+输入: root = [8,6,10,5,7,9,11], k = 12
+输出: true
+解释: 节点 5 和节点 7 之和等于 12
+示例 2：
+
+输入: root = [8,6,10,5,7,9,11], k = 22
+输出: false
+解释: 不存在两个节点值之和为 22 的节点
+
+
+提示：
+
+二叉树的节点个数的范围是  [1, 104].
+-104 <= Node.val <= 104
+root 为二叉搜索树
+-105 <= k <= 105
+
+代码：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    Set<Integer> set = new HashSet<Integer>();
+
+    public boolean findTarget(TreeNode root, int k) {
+        if(root == null) {
+            return false;
+        }
+        if(set.contains(k - root.val)) {
+            return true;
+        }
+        set.add(root.val);
+        return findTarget(root.left, k) || findTarget(root.right, k);
+    }
+}
+```
+
+#### [剑指 Offer II 057. 值和下标之差都在给定的范围内](https://leetcode.cn/problems/7WqeDu/)
+
+给你一个整数数组 nums 和两个整数 k 和 t 。请你判断是否存在 两个不同下标 i 和 j，使得 abs(nums[i] - nums[j]) <= t ，同时又满足 abs(i - j) <= k 。
+
+如果存在则返回 true，不存在返回 false。
+
+示例 1：
+
+输入：nums = [1,2,3,1], k = 3, t = 0
+输出：true
+示例 2：
+
+输入：nums = [1,0,1,1], k = 1, t = 2
+输出：true
+示例 3：
+
+输入：nums = [1,5,9,1,5,9], k = 2, t = 3
+输出：false
+
+
+提示：
+
+0 <= nums.length <= 2 * 104
+-231 <= nums[i] <= 231 - 1
+0 <= k <= 104
+0 <= t <= 231 - 1
+
+代码：
+
+```java
+class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        int n = nums.length;
+        TreeSet<Long> set = new TreeSet<Long>();
+        for(int i = 0; i < n; i++) {
+            Long ceiling = set.ceiling((long)nums[i] - (long)t);
+            if(ceiling != null && ceiling <= (long)nums[i] + (long)t) {
+                return true;
+            }
+            set.add((long) nums[i]);
+            if(i >= k) {
+                set.remove((long)nums[i - k]);
+            }
+        }
+        return false;
+    }
+}
+```
+
+#### [剑指 Offer II 058. 日程表](https://leetcode.cn/problems/fi9suh/)
+
+请实现一个 MyCalendar 类来存放你的日程安排。如果要添加的时间内没有其他安排，则可以存储这个新的日程安排。
+
+MyCalendar 有一个 book(int start, int end)方法。它意味着在 start 到 end 时间内增加一个日程安排，注意，这里的时间是半开区间，即 [start, end), 实数 x 的范围为，  start <= x < end。
+
+当两个日程安排有一些时间上的交叉时（例如两个日程安排都在同一时间内），就会产生重复预订。
+
+每次调用 MyCalendar.book方法时，如果可以将日程安排成功添加到日历中而不会导致重复预订，返回 true。否则，返回 false 并且不要将该日程安排添加到日历中。
+
+请按照以下步骤调用 MyCalendar 类: MyCalendar cal = new MyCalendar(); MyCalendar.book(start, end)
+
+示例:
+
+输入:
+["MyCalendar","book","book","book"]
+[[],[10,20],[15,25],[20,30]]
+输出: [null,true,false,true]
+解释: 
+MyCalendar myCalendar = new MyCalendar();
+MyCalendar.book(10, 20); // returns true 
+MyCalendar.book(15, 25); // returns false ，第二个日程安排不能添加到日历中，因为时间 15 已经被第一个日程安排预定了
+MyCalendar.book(20, 30); // returns true ，第三个日程安排可以添加到日历中，因为第一个日程安排并不包含时间 20 
+
+
+提示：
+
+每个测试用例，调用 MyCalendar.book 函数最多不超过 1000次。
+0 <= start < end <= 109
+
+代码：
+
+```java
+class MyCalendar {
+    List<int[]> booked;
+
+    public MyCalendar() {
+        booked = new ArrayList<int[]>();
+    }
+
+    public boolean book(int start, int end) {
+        for (int[] arr : booked) {
+            int l = arr[0], r = arr[1];
+            if (l < end && start < r) {
+                return false;
+            }
+        }
+        booked.add(new int[]{start, end});
+        return true;
+    }
+}
+
+/**
+ * Your MyCalendar object will be instantiated and called as such:
+ * MyCalendar obj = new MyCalendar();
+ * boolean param_1 = obj.book(start,end);
+ */
+```
+
