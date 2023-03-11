@@ -1531,7 +1531,6 @@ class Solution {
 
 给定位于列表第一级的头节点，请扁平化列表，即将这样的多级双向链表展平成普通的双向链表，使所有结点出现在单级双链表中。
 
-```
 示例 1：
 输入：head = [1,2,3,4,5,6,null,null,null,7,8,9,10,null,null,11,12]
 输出：[1,2,3,7,8,11,12,9,10,4,5,6]
@@ -1549,7 +1548,6 @@ class Solution {
 示例 3：
 输入：head = []
 输出：[]
-```
 
 代码：
 
@@ -1615,7 +1613,6 @@ class Solution {
 
 如果列表为空（给定的节点是 null），需要创建一个循环有序列表并返回这个节点。否则。请返回原先给定的节点。
 
-```
 示例 1：
 输入：head = [3,4,1], insertVal = 2
 输出：[3,4,1,2]
@@ -1634,7 +1631,6 @@ class Solution {
 0 <= Number of Nodes <= 5 * 10^4
 -10^6 <= Node.val <= 10^6
 -10^6 <= insertVal <= 10^6
-```
 
 代码：
 
@@ -3675,5 +3671,409 @@ class MyCalendar {
  * MyCalendar obj = new MyCalendar();
  * boolean param_1 = obj.book(start,end);
  */
+```
+
+#### [剑指 Offer II 059. 数据流的第 K 大数值](https://leetcode.cn/problems/jBjn9C/)
+
+设计一个找到数据流中第 k 大元素的类（class）。注意是排序后的第 k 大元素，不是第 k 个不同的元素。
+
+请实现 KthLargest 类：
+
+KthLargest(int k, int[] nums) 使用整数 k 和整数流 nums 初始化对象。
+int add(int val) 将 val 插入数据流 nums 后，返回当前数据流中第 k 大的元素。
+
+
+示例：
+
+输入：
+["KthLargest", "add", "add", "add", "add", "add"]
+[[3, [4, 5, 8, 2]], [3], [5], [10], [9], [4]]
+输出：
+[null, 4, 5, 5, 8, 8]
+
+解释：
+KthLargest kthLargest = new KthLargest(3, [4, 5, 8, 2]);
+kthLargest.add(3);   // return 4
+kthLargest.add(5);   // return 5
+kthLargest.add(10);  // return 5
+kthLargest.add(9);   // return 8
+kthLargest.add(4);   // return 8
+
+
+提示：
+
+1 <= k <= 104
+0 <= nums.length <= 104
+-104 <= nums[i] <= 104
+-104 <= val <= 104
+最多调用 add 方法 104 次
+题目数据保证，在查找第 k 大元素时，数组中至少有 k 个元素
+
+```java
+class KthLargest {
+
+    PriorityQueue<Integer> pq;
+    int k;
+
+    public KthLargest(int k, int[] nums) {
+        this.k = k;
+        pq = new PriorityQueue<Integer>();
+        for(int x : nums) {
+            add(x);
+        }
+    }
+    
+    public int add(int val) {
+        pq.offer(val);
+        if(pq.size() > k) {
+            pq.poll();
+        }
+        return pq.peek();
+    }
+}
+
+/**
+ * Your KthLargest object will be instantiated and called as such:
+ * KthLargest obj = new KthLargest(k, nums);
+ * int param_1 = obj.add(val);
+ */
+```
+
+#### [剑指 Offer II 060. 出现频率最高的 k 个数字](https://leetcode.cn/problems/g5c51o/)
+
+给定一个整数数组 nums 和一个整数 k ，请返回其中出现频率前 k 高的元素。可以按 任意顺序 返回答案。
+
+示例 1:
+
+输入: nums = [1,1,1,2,2,3], k = 2
+输出: [1,2]
+示例 2:
+
+输入: nums = [1], k = 1
+输出: [1]
+
+
+提示：
+
+1 <= nums.length <= 105
+k 的取值范围是 [1, 数组中不相同的元素的个数]
+题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的
+
+```java
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> occurences = new HashMap<Integer, Integer>();
+        for(int num : nums) {
+            occurences.put(num, occurences.getOrDefault(num, 0) + 1);
+        }
+
+        PriorityQueue<int[]> queue = new PriorityQueue<int[]>(new Comparator<int[]>() {
+            public int compare(int[] m, int[] n) {
+                return m[1] - n[1];
+            }
+        });
+
+        for(Map.Entry<Integer, Integer> entry : occurences.entrySet()) {
+            int num = entry.getKey(), count = entry.getValue();
+            if(queue.size() == k) {
+                if(queue.peek()[1] < count) {
+                    queue.poll();
+                    queue.offer(new int[]{num, count});
+                }
+            } else {
+                queue.offer(new int[]{num, count});
+            }
+        }
+        int[] ret = new int[k];
+        for(int i = 0; i < k; i++) {
+            ret[i] = queue.poll()[0];
+        }
+        return ret;
+    }
+}
+```
+
+#### [剑指 Offer II 061. 和最小的 k 个数对](https://leetcode.cn/problems/qn8gGX/)
+
+给定两个以升序排列的整数数组 nums1 和 nums2 , 以及一个整数 k 。
+
+定义一对值 (u,v)，其中第一个元素来自 nums1，第二个元素来自 nums2 。
+
+请找到和最小的 k 个数对 (u1,v1),  (u2,v2)  ...  (uk,vk) 。
+
+示例 1:
+
+输入: nums1 = [1,7,11], nums2 = [2,4,6], k = 3
+输出: [1,2],[1,4],[1,6]
+解释: 返回序列中的前 3 对数：
+    [1,2],[1,4],[1,6],[7,2],[7,4],[11,2],[7,6],[11,4],[11,6]
+示例 2:
+
+输入: nums1 = [1,1,2], nums2 = [1,2,3], k = 2
+输出: [1,1],[1,1]
+解释: 返回序列中的前 2 对数：
+     [1,1],[1,1],[1,2],[2,1],[1,2],[2,2],[1,3],[1,3],[2,3]
+示例 3:
+
+输入: nums1 = [1,2], nums2 = [3], k = 3 
+输出: [1,3],[2,3]
+解释: 也可能序列中所有的数对都被返回:[1,3],[2,3]
+
+
+提示:
+
+1 <= nums1.length, nums2.length <= 104
+-109 <= nums1[i], nums2[i] <= 109
+nums1, nums2 均为升序排列
+1 <= k <= 1000
+
+```java
+class Solution {
+    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>(k, (o1, o2)->{
+            return nums1[o1[0]] + nums2[o1[1]] - nums1[o2[0]] - nums2[o2[1]];
+        });
+        List<List<Integer>> ans = new ArrayList<>();
+        int m = nums1.length;
+        int n = nums2.length;
+        for(int i = 0; i < Math.min(m, k); i++) {
+            pq.offer(new int[]{i, 0});
+        }
+        while(k-- > 0 && !pq.isEmpty()) {
+            int[] idxPair = pq.poll();
+            List<Integer> list = new ArrayList<>();
+            list.add(nums1[idxPair[0]]);
+            list.add(nums2[idxPair[1]]);
+            ans.add(list);
+            if(idxPair[1] + 1 < n) {
+                pq.offer(new int[]{idxPair[0], idxPair[1] + 1});
+            }
+        }
+
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 062. 实现前缀树](https://leetcode.cn/problems/QC3q1f/)
+
+Trie（发音类似 "try"）或者说 前缀树 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补完和拼写检查。
+
+请你实现 Trie 类：
+
+Trie() 初始化前缀树对象。
+void insert(String word) 向前缀树中插入字符串 word 。
+boolean search(String word) 如果字符串 word 在前缀树中，返回 true（即，在检索之前已经插入）；否则，返回 false 。
+boolean startsWith(String prefix) 如果之前已经插入的字符串 word 的前缀之一为 prefix ，返回 true ；否则，返回 false 。
+
+
+示例：
+
+输入
+inputs = ["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
+inputs = [[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]
+输出
+[null, null, true, false, true, null, true]
+
+解释
+Trie trie = new Trie();
+trie.insert("apple");
+trie.search("apple");   // 返回 True
+trie.search("app");     // 返回 False
+trie.startsWith("app"); // 返回 True
+trie.insert("app");
+trie.search("app");     // 返回 True
+
+
+提示：
+
+1 <= word.length, prefix.length <= 2000
+word 和 prefix 仅由小写英文字母组成
+insert、search 和 startsWith 调用次数 总计 不超过 3 * 104 次
+
+```java
+class Trie {
+    private Trie[] children;
+    private boolean isEnd;
+
+    public Trie() {
+        children = new Trie[26];
+        isEnd = false;
+    }
+    
+    public void insert(String word) {
+        Trie node = this;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            int index = ch - 'a';
+            if (node.children[index] == null) {
+                node.children[index] = new Trie();
+            }
+            node = node.children[index];
+        }
+        node.isEnd = true;
+    }
+    
+    public boolean search(String word) {
+        Trie node = searchPrefix(word);
+        return node != null && node.isEnd;
+    }
+    
+    public boolean startsWith(String prefix) {
+        return searchPrefix(prefix) != null;
+    }
+
+    private Trie searchPrefix(String prefix) {
+        Trie node = this;
+        for (int i = 0; i < prefix.length(); i++) {
+            char ch = prefix.charAt(i);
+            int index = ch - 'a';
+            if (node.children[index] == null) {
+                return null;
+            }
+            node = node.children[index];
+        }
+        return node;
+    }
+}
+```
+
+#### [剑指 Offer II 063. 替换单词](https://leetcode.cn/problems/UhWRSj/)
+
+在英语中，有一个叫做 词根(root) 的概念，它可以跟着其他一些词组成另一个较长的单词——我们称这个词为 继承词(successor)。例如，词根an，跟随着单词 other(其他)，可以形成新的单词 another(另一个)。
+
+现在，给定一个由许多词根组成的词典和一个句子，需要将句子中的所有继承词用词根替换掉。如果继承词有许多可以形成它的词根，则用最短的词根替换它。
+
+需要输出替换之后的句子。
+
+示例 1：
+
+输入：dictionary = ["cat","bat","rat"], sentence = "the cattle was rattled by the battery"
+输出："the cat was rat by the bat"
+示例 2：
+
+输入：dictionary = ["a","b","c"], sentence = "aadsfasf absbs bbab cadsfafs"
+输出："a a b c"
+示例 3：
+
+输入：dictionary = ["a", "aa", "aaa", "aaaa"], sentence = "a aa a aaaa aaa aaa aaa aaaaaa bbb baba ababa"
+输出："a a a a a a a a bbb baba a"
+示例 4：
+
+输入：dictionary = ["catt","cat","bat","rat"], sentence = "the cattle was rattled by the battery"
+输出："the cat was rat by the bat"
+示例 5：
+
+输入：dictionary = ["ac","ab"], sentence = "it is abnormal that this solution is accepted"
+输出："it is ab that this solution is ac"
+
+
+提示：
+
+1 <= dictionary.length <= 1000
+1 <= dictionary[i].length <= 100
+dictionary[i] 仅由小写字母组成。
+1 <= sentence.length <= 10^6
+sentence 仅由小写字母和空格组成。
+sentence 中单词的总量在范围 [1, 1000] 内。
+sentence 中每个单词的长度在范围 [1, 1000] 内。
+sentence 中单词之间由一个空格隔开。
+sentence 没有前导或尾随空格。
+
+```java
+class Solution {
+    public String replaceWords(List<String> dictionary, String sentence) {
+        Set<String> dictionarySet = new HashSet<String>();
+        for (String root : dictionary) {
+            dictionarySet.add(root);
+        }
+        String[] words = sentence.split(" ");
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            for (int j = 0; j < word.length(); j++) {
+                if (dictionarySet.contains(word.substring(0, 1 + j))) {
+                    words[i] = word.substring(0, 1 + j);
+                    break;
+                }
+            }
+        }
+        return String.join(" ", words);
+    }
+}
+```
+
+#### [剑指 Offer II 064. 神奇的字典](https://leetcode.cn/problems/US1pGT/)
+
+设计一个使用单词列表进行初始化的数据结构，单词列表中的单词 互不相同 。 如果给出一个单词，请判定能否只将这个单词中一个字母换成另一个字母，使得所形成的新单词存在于已构建的神奇字典中。
+
+实现 MagicDictionary 类：
+
+MagicDictionary() 初始化对象
+void buildDict(String[] dictionary) 使用字符串数组 dictionary 设定该数据结构，dictionary 中的字符串互不相同
+bool search(String searchWord) 给定一个字符串 searchWord ，判定能否只将字符串中 一个 字母换成另一个字母，使得所形成的新字符串能够与字典中的任一字符串匹配。如果可以，返回 true ；否则，返回 false 。
+
+
+示例：
+
+输入
+inputs = ["MagicDictionary", "buildDict", "search", "search", "search", "search"]
+inputs = [[], [["hello", "leetcode"]], ["hello"], ["hhllo"], ["hell"], ["leetcoded"]]
+输出
+[null, null, false, true, false, false]
+
+解释
+MagicDictionary magicDictionary = new MagicDictionary();
+magicDictionary.buildDict(["hello", "leetcode"]);
+magicDictionary.search("hello"); // 返回 False
+magicDictionary.search("hhllo"); // 将第二个 'h' 替换为 'e' 可以匹配 "hello" ，所以返回 True
+magicDictionary.search("hell"); // 返回 False
+magicDictionary.search("leetcoded"); // 返回 False
+
+
+提示：
+
+1 <= dictionary.length <= 100
+1 <= dictionary[i].length <= 100
+dictionary[i] 仅由小写英文字母组成
+dictionary 中的所有字符串 互不相同
+1 <= searchWord.length <= 100
+searchWord 仅由小写英文字母组成
+buildDict 仅在 search 之前调用一次
+最多调用 100 次 search
+
+```java
+class MagicDictionary {
+    private String[] words;
+
+    public MagicDictionary() {
+
+    }
+
+    public void buildDict(String[] dictionary) {
+        words = dictionary;
+    }
+
+    public boolean search(String searchWord) {
+        for (String word : words) {
+            if (word.length() != searchWord.length()) {
+                continue;
+            }
+
+            int diff = 0;
+            for (int i = 0; i < word.length(); ++i) {
+                if (word.charAt(i) != searchWord.charAt(i)) {
+                    ++diff;
+                    if (diff > 1) {
+                        break;
+                    }
+                }
+            }
+            if (diff == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
 ```
 

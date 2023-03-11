@@ -5,7 +5,22 @@ public class test {
     private static String str = "";
 
     public static void main(String[] args) throws Exception {
-        isPalindrome("A man, a plan, a canal: Panama");
+        String num = "15919731483";
+        if(checkPhoneNumber(num)) {
+            System.out.println(num + "手机号合法");
+        } else {
+            System.out.println(num + "手机号不合法");
+        }
+    }
+
+    public static boolean checkPhoneNumber(String num) {
+        String myreg = "^[0-9]{11}$";
+        boolean flag = true;
+        if(!num.matches(myreg)) {
+            System.out.println("不合法的手机号为：" + num);
+            flag = false;
+        }
+        return flag;
     }
 
     public static boolean check() {
