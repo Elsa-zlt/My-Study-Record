@@ -4077,3 +4077,180 @@ class MagicDictionary {
 }
 ```
 
+#### [剑指 Offer II 065. 最短的单词编码](https://leetcode.cn/problems/iSwD2y/)
+
+单词数组 words 的 有效编码 由任意助记字符串 s 和下标数组 indices 组成，且满足：
+
+words.length == indices.length
+助记字符串 s 以 '#' 字符结尾
+对于每个下标 indices[i] ，s 的一个从 indices[i] 开始、到下一个 '#' 字符结束（但不包括 '#'）的 子字符串 恰好与 words[i] 相等
+给定一个单词数组 words ，返回成功对 words 进行编码的最小助记字符串 s 的长度 。
+
+示例 1：
+
+输入：words = ["time", "me", "bell"]
+输出：10
+解释：一组有效编码为 s = "time#bell#" 和 indices = [0, 2, 5] 。
+words[0] = "time" ，s 开始于 indices[0] = 0 到下一个 '#' 结束的子字符串，如加粗部分所示 "time#bell#"
+words[1] = "me" ，s 开始于 indices[1] = 2 到下一个 '#' 结束的子字符串，如加粗部分所示 "time#bell#"
+words[2] = "bell" ，s 开始于 indices[2] = 5 到下一个 '#' 结束的子字符串，如加粗部分所示 "time#bell#"
+示例 2：
+
+输入：words = ["t"]
+输出：2
+解释：一组有效编码为 s = "t#" 和 indices = [0] 。
+
+
+提示：
+
+1 <= words.length <= 2000
+1 <= words[i].length <= 7
+words[i] 仅由小写字母组成
+
+```java
+class Solution {
+    public int minimumLengthEncoding(String[] words) {
+        Set<String> good = new HashSet<String>(Arrays.asList(words));
+        for(String word: words) {
+            for(int k = 1; k < word.length(); k++) {
+                good.remove(word.substring(k));
+            }
+        }
+        int ans = 0;
+        for(String word: good) {
+            ans += word.length() + 1;
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 066. 单词之和](https://leetcode.cn/problems/z1R5dt/)
+
+实现一个 MapSum 类，支持两个方法，insert 和 sum：
+
+MapSum() 初始化 MapSum 对象
+void insert(String key, int val) 插入 key-val 键值对，字符串表示键 key ，整数表示值 val 。如果键 key 已经存在，那么原来的键值对将被替代成新的键值对。
+int sum(string prefix) 返回所有以该前缀 prefix 开头的键 key 的值的总和。
+
+
+示例：
+
+输入：
+inputs = ["MapSum", "insert", "sum", "insert", "sum"]
+inputs = [[], ["apple", 3], ["ap"], ["app", 2], ["ap"]]
+输出：
+[null, null, 3, null, 5]
+
+解释：
+MapSum mapSum = new MapSum();
+mapSum.insert("apple", 3);  
+mapSum.sum("ap");           // return 3 (apple = 3)
+mapSum.insert("app", 2);    
+mapSum.sum("ap");           // return 5 (apple + app = 3 + 2 = 5)
+
+
+提示：
+
+1 <= key.length, prefix.length <= 50
+key 和 prefix 仅由小写英文字母组成
+1 <= val <= 1000
+最多调用 50 次 insert 和 sum
+
+```java
+class MapSum {
+
+    Map<String, Integer> map;
+
+    /** Initialize your data structure here. */
+    public MapSum() {
+        map = new HashMap<>();
+    }
+    
+    public void insert(String key, int val) {
+        map.put(key, val);
+    }
+    
+    public int sum(String prefix) {
+        int res = 0;
+        for(String s : map.keySet()) {
+            if(s.startsWith(prefix)) {
+                res += map.get(s);
+            }
+        }
+        return res;
+    }
+}
+
+/**
+ * Your MapSum object will be instantiated and called as such:
+ * MapSum obj = new MapSum();
+ * obj.insert(key,val);
+ * int param_2 = obj.sum(prefix);
+ */
+```
+
+#### [剑指 Offer II 067. 最大的异或](https://leetcode.cn/problems/ms70jA/)
+
+给你一个整数数组 nums ，返回 nums[i] XOR nums[j] 的最大运算结果，其中 0 ≤ i ≤ j < n 。
+
+示例 1：
+
+输入：nums = [3,10,5,25,2,8]
+输出：28
+解释：最大运算结果是 5 XOR 25 = 28.
+示例 2：
+
+输入：nums = [14,70,53,83,49,91,36,80,92,51,66,70]
+输出：127
+
+
+提示：
+
+1 <= nums.length <= 2 * 105
+0 <= nums[i] <= 231 - 1
+
+出处。
+
+```java
+class Solution {
+    // 最高位的二进制位编号为 30
+    static final int HIGH_BIT = 30;
+
+    public int findMaximumXOR(int[] nums) {
+        int x = 0;
+        for (int k = HIGH_BIT; k >= 0; --k) {
+            Set<Integer> seen = new HashSet<Integer>();
+            // 将所有的 pre^k(a_j) 放入哈希表中
+            for (int num : nums) {
+                // 如果只想保留从最高位开始到第 k 个二进制位为止的部分
+                // 只需将其右移 k 位
+                seen.add(num >> k);
+            }
+
+            // 目前 x 包含从最高位开始到第 k+1 个二进制位为止的部分
+            // 我们将 x 的第 k 个二进制位置为 1，即为 x = x*2+1
+            int xNext = x * 2 + 1;
+            boolean found = false;
+            
+            // 枚举 i
+            for (int num : nums) {
+                if (seen.contains(xNext ^ (num >> k))) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                x = xNext;
+            } else {
+                // 如果没有找到满足等式的 a_i 和 a_j，那么 x 的第 k 个二进制位只能为 0
+                // 即为 x = x*2
+                x = xNext - 1;
+            }
+        }
+        return x;
+    }
+}
+```
+
