@@ -4254,3 +4254,151 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer II 068. 查找插入位置](https://leetcode.cn/problems/N6YdxV/)
+
+给定一个排序的整数数组 nums 和一个整数目标值 target ，请在数组中找到 target ，并返回其下标。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+请必须使用时间复杂度为 O(log n) 的算法。
+
+示例 1:
+
+输入: nums = [1,3,5,6], target = 5
+输出: 2
+示例 2:
+
+输入: nums = [1,3,5,6], target = 2
+输出: 1
+示例 3:
+
+输入: nums = [1,3,5,6], target = 7
+输出: 4
+示例 4:
+
+输入: nums = [1,3,5,6], target = 0
+输出: 0
+示例 5:
+
+输入: nums = [1], target = 0
+输出: 0
+
+
+提示:
+
+1 <= nums.length <= 104
+-104 <= nums[i] <= 104
+nums 为无重复元素的升序排列数组
+-104 <= target <= 104
+
+```java
+class Solution {
+    public int searchInsert(int[] nums, int target) {
+        int n = nums.length;
+        int left = 0, right = n - 1, ans = n;
+        while (left <= right) {
+            int mid = ((right - left) >> 1) + left;
+            if (target <= nums[mid]) {
+                ans = mid;
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 069. 山峰数组的顶部](https://leetcode.cn/problems/B1IidL/)
+
+符合下列属性的数组 arr 称为 山峰数组（山脉数组） ：
+
+arr.length >= 3
+存在 i（0 < i < arr.length - 1）使得：
+arr[0] < arr[1] < ... arr[i-1] < arr[i]
+arr[i] > arr[i+1] > ... > arr[arr.length - 1]
+给定由整数组成的山峰数组 arr ，返回任何满足 arr[0] < arr[1] < ... arr[i - 1] < arr[i] > arr[i + 1] > ... > arr[arr.length - 1] 的下标 i ，即山峰顶部。
+
+示例 1：
+
+输入：arr = [0,1,0]
+输出：1
+示例 2：
+
+输入：arr = [1,3,5,4,2]
+输出：2
+示例 3：
+
+输入：arr = [0,10,5,2]
+输出：1
+示例 4：
+
+输入：arr = [3,4,5,1]
+输出：2
+示例 5：
+
+输入：arr = [24,69,100,99,79,78,67,36,26,19]
+输出：2
+
+
+提示：
+
+3 <= arr.length <= 104
+0 <= arr[i] <= 106
+题目数据保证 arr 是一个山脉数组
+
+```java
+class Solution {
+    public int peakIndexInMountainArray(int[] arr) {
+        int n = arr.length;
+        int ans = -1;
+        for (int i = 1; i < n - 1; ++i) {
+            if (arr[i] > arr[i + 1]) {
+                ans = i;
+                break;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 070. 排序数组中只出现一次的数字](https://leetcode.cn/problems/skFtm2/)
+
+给定一个只包含整数的有序数组 nums ，每个元素都会出现两次，唯有一个数只会出现一次，请找出这个唯一的数字。
+
+你设计的解决方案必须满足 O(log n) 时间复杂度和 O(1) 空间复杂度。
+
+ 
+
+示例 1:
+
+输入: nums = [1,1,2,3,3,4,4,8,8]
+输出: 2
+示例 2:
+
+输入: nums =  [3,3,7,7,10,11,11]
+输出: 10
+
+
+提示:
+
+1 <= nums.length <= 105
+0 <= nums[i] <= 105
+
+```java
+class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        int low = 0, high = nums.length - 1;
+        while (low < high) {
+            int mid = (high - low) / 2 + low;
+            if (nums[mid] == nums[mid ^ 1]) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return nums[low];
+    }
+}
+```
+
