@@ -4583,3 +4583,502 @@ class Solution {
 }
 ```
 
+#### [剑指 Offer II 074. 合并区间](https://leetcode.cn/problems/SsGoHC/)
+
+以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。
+
+示例 1：
+
+输入：intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出：[[1,6],[8,10],[15,18]]
+解释：区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+示例 2：
+
+输入：intervals = [[1,4],[4,5]]
+输出：[[1,5]]
+解释：区间 [1,4] 和 [4,5] 可被视为重叠区间。
+
+
+提示：
+
+1 <= intervals.length <= 104
+intervals[i].length == 2
+0 <= starti <= endi <= 104
+
+```java
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        if(intervals.length == 0) {
+            return new int[0][2];
+        }
+        Arrays.sort(intervals, new Comparator<int[]>() {
+            public int compare(int[] interval1, int[] interval2) {
+                return interval1[0] - interval2[0];
+            }
+        });
+        List<int[]> merged = new ArrayList<int[]>();
+        for(int i = 0; i < intervals.length; i++) {
+            int L = intervals[i][0], R = intervals[i][1];
+            if(merged.size() == 0 || merged.get(merged.size() - 1)[1] < L) {
+                merged.add(new int[]{L, R});
+            } else {
+                merged.get(merged.size() - 1)[1] = Math.max(merged.get(merged.size() - 1)[1], R);
+            }
+        }
+        return merged.toArray(new int[merged.size()][]);
+    }
+}
+```
+
+#### [剑指 Offer II 075. 数组相对排序](https://leetcode.cn/problems/0H97ZC/)
+
+给定两个数组，arr1 和 arr2，
+
+arr2 中的元素各不相同
+arr2 中的每个元素都出现在 arr1 中
+对 arr1 中的元素进行排序，使 arr1 中项的相对顺序和 arr2 中的相对顺序相同。未在 arr2 中出现过的元素需要按照升序放在 arr1 的末尾。
+
+示例：
+
+输入：arr1 = [2,3,1,3,2,4,6,7,9,2,19], arr2 = [2,1,4,3,9,6]
+输出：[2,2,2,1,4,3,3,9,6,7,19]
+
+
+提示：
+
+1 <= arr1.length, arr2.length <= 1000
+0 <= arr1[i], arr2[i] <= 1000
+arr2 中的元素 arr2[i] 各不相同
+arr2 中的每个元素 arr2[i] 都出现在 arr1 中
+
+```java
+class Solution {
+    public int[] relativeSortArray(int[] arr1, int[] arr2) {
+        int upper = 0;
+        for (int x : arr1) {
+            upper = Math.max(upper, x);
+        }
+        int[] frequency = new int[upper + 1];
+        for (int x : arr1) {
+            ++frequency[x];
+        }
+        int[] ans = new int[arr1.length];
+        int index = 0;
+        for (int x : arr2) {
+            for (int i = 0; i < frequency[x]; ++i) {
+                ans[index++] = x;
+            }
+            frequency[x] = 0;
+        }
+        for (int x = 0; x <= upper; ++x) {
+            for (int i = 0; i < frequency[x]; ++i) {
+                ans[index++] = x;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 076. 数组中的第 k 大的数字](https://leetcode.cn/problems/xx4gT2/)
+
+给定整数数组 nums 和整数 k，请返回数组中第 k 个最大的元素。
+
+请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+示例 1:
+
+输入: [3,2,1,5,6,4] 和 k = 2
+输出: 5
+示例 2:
+
+输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
+输出: 4
+
+
+提示：
+
+1 <= k <= nums.length <= 104
+-104 <= nums[i] <= 104
+
+```java
+class Solution {
+    Random random = new Random();
+
+    public int findKthLargest(int[] nums, int k) {
+        return quickSelect(nums, 0, nums.length - 1, nums.length - k);
+    }
+
+    public int quickSelect(int[] a, int l, int r, int index) {
+        int q = randomPartition(a, l, r);
+        if (q == index) {
+            return a[q];
+        } else {
+            return q < index ? quickSelect(a, q + 1, r, index) : quickSelect(a, l, q - 1, index);
+        }
+    }
+
+    public int randomPartition(int[] a, int l, int r) {
+        int i = random.nextInt(r - l + 1) + l;
+        swap(a, i, r);
+        return partition(a, l, r);
+    }
+
+    public int partition(int[] a, int l, int r) {
+        int x = a[r], i = l - 1;
+        for (int j = l; j < r; ++j) {
+            if (a[j] <= x) {
+                swap(a, ++i, j);
+            }
+        }
+        swap(a, i + 1, r);
+        return i + 1;
+    }
+
+    public void swap(int[] a, int i, int j) {
+        int temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
+    }
+}
+```
+
+#### [剑指 Offer II 077. 链表排序](https://leetcode.cn/problems/7WHec2/)
+
+给定链表的头结点 head ，请将其按 升序 排列并返回 排序后的链表 。
+
+示例 1：
+
+输入：head = [4,2,1,3]
+输出：[1,2,3,4]
+示例 2：
+
+输入：head = [-1,5,3,4,0]
+输出：[-1,0,3,4,5]
+示例 3：
+
+输入：head = []
+输出：[]
+
+
+提示：
+
+链表中节点的数目在范围 [0, 5 * 104] 内
+-105 <= Node.val <= 105
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode sortList(ListNode head) {
+        return sortList(head, null);
+    }
+
+    public ListNode sortList(ListNode head, ListNode tail) {
+        if (head == null) {
+            return head;
+        }
+        if (head.next == tail) {
+            head.next = null;
+            return head;
+        }
+        ListNode slow = head, fast = head;
+        while (fast != tail) {
+            slow = slow.next;
+            fast = fast.next;
+            if (fast != tail) {
+                fast = fast.next;
+            }
+        }
+        ListNode mid = slow;
+        ListNode list1 = sortList(head, mid);
+        ListNode list2 = sortList(mid, tail);
+        ListNode sorted = merge(list1, list2);
+        return sorted;
+    }
+
+    public ListNode merge(ListNode head1, ListNode head2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode temp = dummyHead, temp1 = head1, temp2 = head2;
+        while (temp1 != null && temp2 != null) {
+            if (temp1.val <= temp2.val) {
+                temp.next = temp1;
+                temp1 = temp1.next;
+            } else {
+                temp.next = temp2;
+                temp2 = temp2.next;
+            }
+            temp = temp.next;
+        }
+        if (temp1 != null) {
+            temp.next = temp1;
+        } else if (temp2 != null) {
+            temp.next = temp2;
+        }
+        return dummyHead.next;
+    }
+}
+```
+
+#### [剑指 Offer II 078. 合并排序链表](https://leetcode.cn/problems/vvXgSW/)
+
+给定一个链表数组，每个链表都已经按升序排列。
+
+请将所有链表合并到一个升序链表中，返回合并后的链表。
+
+示例 1：
+
+输入：lists = [[1,4,5],[1,3,4],[2,6]]
+输出：[1,1,2,3,4,4,5,6]
+解释：链表数组如下：
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+将它们合并到一个有序链表中得到。
+1->1->2->3->4->4->5->6
+示例 2：
+
+输入：lists = []
+输出：[]
+示例 3：
+
+输入：lists = [[]]
+输出：[]
+
+
+提示：
+
+k == lists.length
+0 <= k <= 10^4
+0 <= lists[i].length <= 500
+-10^4 <= lists[i][j] <= 10^4
+lists[i] 按 升序 排列
+lists[i].length 的总和不超过 10^4
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution 
+{
+    public ListNode mergeKLists(ListNode[] lists) //这题要求返回的是链表类型，而不是链表指针类型
+    {
+       if(lists.length==0) return null;
+       
+       return mergeKLists(lists,0,lists.length-1);
+    }
+    public ListNode mergeKLists(ListNode[] lists,int start, int end)//k个链表两两合并的关键步骤
+    {
+       if(start==end) return lists[start];//递归结束条件，即get到了一个单链表
+       int mid=start+(end-start)/2;
+       ListNode left=mergeKLists(lists,start,mid);
+       ListNode right=mergeKLists(lists,mid+1,end);
+       return merge2Lists(left,right);
+    }
+    public ListNode merge2Lists(ListNode l1,ListNode l2)//l1就是代表位置
+    {
+        ListNode  l3=new ListNode();
+        ListNode pre=l3;
+        while(l1!=null&&l2!=null)
+        {
+          if(l1.val<l2.val)
+          {
+              pre.next=l1;
+              l1=l1.next;
+          }
+          else
+          {
+              pre.next=l2;
+              l2=l2.next;
+          }
+          pre=pre.next;
+        }
+        if(l1==null) {pre.next=l2;}
+        else  {pre.next=l1;}
+        return l3.next;
+    }
+}
+```
+
+#### [剑指 Offer II 079. 所有子集](https://leetcode.cn/problems/TVdhkn/)
+
+给定一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。
+
+解集 不能 包含重复的子集。你可以按 任意顺序 返回解集。
+
+示例 1：
+
+输入：nums = [1,2,3]
+输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+示例 2：
+
+输入：nums = [0]
+输出：[[],[0]]
+
+
+提示：
+
+1 <= nums.length <= 10
+-10 <= nums[i] <= 10
+nums 中的所有元素 互不相同
+
+```java
+class Solution {
+    List<Integer> t = new ArrayList<Integer>();
+    List<List<Integer>> ans = new ArrayList<List<Integer>>();
+
+    public List<List<Integer>> subsets(int[] nums) {
+        int n = nums.length;
+        for (int mask = 0; mask < (1 << n); ++mask) {
+            t.clear();
+            for (int i = 0; i < n; ++i) {
+                if ((mask & (1 << i)) != 0) {
+                    t.add(nums[i]);
+                }
+            }
+            ans.add(new ArrayList<Integer>(t));
+        }
+        return ans;
+    }
+}
+```
+
+#### [剑指 Offer II 080. 含有 k 个元素的组合](https://leetcode.cn/problems/uUsW3B/)
+
+给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。
+
+示例 1:
+
+输入: n = 4, k = 2
+输出:
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+示例 2:
+
+输入: n = 1, k = 1
+输出: [[1]]
+
+
+提示:
+
+1 <= n <= 20
+1 <= k <= n
+
+```java
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack(n, k, 1, new ArrayList<>(), res);
+        return res;
+    }
+
+    public void backtrack(int n, int k, int cur, List<Integer> temp, List<List<Integer>> res) {
+        // 剪枝：temp 长度加上区间 [cur, n] 的长度小于 k，不可能构造出长度为 k 的 temp
+        if (temp.size() + (n - cur + 1) < k) {
+            return;
+        }
+        // 记录合法的答案
+        if (temp.size() == k) {
+            res.add(new ArrayList<>(temp));
+            return;
+        }
+        // 考虑选择当前位置
+        temp.add(cur);
+        backtrack(n, k, cur + 1, temp, res);
+        temp.remove(temp.size() - 1);
+        // 考虑不选择当前位置
+        backtrack(n, k, cur + 1, temp, res);
+    }
+}
+```
+
+#### [剑指 Offer II 081. 允许重复选择元素的组合](https://leetcode.cn/problems/Ygoe9J/)
+
+给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出 candidates 中所有可以使数字和为目标数 target 的唯一组合。
+
+candidates 中的数字可以无限制重复被选取。如果至少一个所选数字数量不同，则两种组合是不同的。 
+
+对于给定的输入，保证和为 target 的唯一组合数少于 150 个。
+
+示例 1：
+
+输入: candidates = [2,3,6,7], target = 7
+输出: [[7],[2,2,3]]
+示例 2：
+
+输入: candidates = [2,3,5], target = 8
+输出: [[2,2,2,2],[2,3,3],[3,5]]
+示例 3：
+
+输入: candidates = [2], target = 1
+输出: []
+示例 4：
+
+输入: candidates = [1], target = 1
+输出: [[1]]
+示例 5：
+
+输入: candidates = [1], target = 2
+输出: [[1,1]]
+
+
+提示：
+
+1 <= candidates.length <= 30
+1 <= candidates[i] <= 200
+candidate 中的每个元素都是独一无二的。
+1 <= target <= 500
+
+```java
+class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> ans = new ArrayList<List<Integer>>();
+        List<Integer> combine = new ArrayList<Integer>();
+        dfs(candidates, target, ans, combine, 0);
+        return ans;
+    }
+
+    public void dfs(int[] candidates, int target, List<List<Integer>> ans, List<Integer> combine, int idx) {
+        if (idx == candidates.length) {
+            return;
+        }
+        if (target == 0) {
+            ans.add(new ArrayList<Integer>(combine));
+            return;
+        }
+        // 直接跳过
+        dfs(candidates, target, ans, combine, idx + 1);
+        // 选择当前数
+        if (target - candidates[idx] >= 0) {
+            combine.add(candidates[idx]);
+            dfs(candidates, target - candidates[idx], ans, combine, idx);
+            combine.remove(combine.size() - 1);
+        }
+    }
+}
+```
+
+
